@@ -45,7 +45,7 @@ function PrintUtils.PrintError(text)
     print(PrintColors.Red.."Error: "..text..PrintColors.White)
 end
 
-function PrintUtils.PrintWaring(text)
+function PrintUtils.PrintWarning(text)
     if not canPrint() then return end
     print(PrintColors.Yellow.."Warning!!: "..text..PrintColors.White)
 end
