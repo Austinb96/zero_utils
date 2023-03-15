@@ -22,16 +22,20 @@ PrintColors = {
 
 --Example usage of PrintUtils.Print
 
---//Print with everything one color//--
+--// Print with everything one color //--
 -- PrintUtils.Print("Testing Print", PrintColors.Red)
 
---//used to print MultiColoredLine//--
+--// Used to print MultiColoredLine //--
 -- PrintUtils.Print(
 --     {
 --         {text = "Testing", color = PrintColors.Green },
 --         {text = "Print", color = PrintColors.Violet }
 --     }
 -- )
+
+--// Or you can print MultiColor like this //--
+--PrintUtils.Print(PrintColors.Red .. "this will also work ".. PrintColors.DarkBlue .. "Just like this")
+
 
 function PrintUtils.Print(text, color)
     local output = ''
