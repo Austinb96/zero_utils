@@ -16,6 +16,8 @@ local debugObjects = {
     static = {}
 }
 
+
+
 local draw = false
 --TODO optimize for when you have to many objects to draw
 local function StartDrawing()
@@ -33,8 +35,8 @@ local function StartDrawing()
                         if DoesEntityExist(drawObject.obj) then
                             pos = GetEntityCoords(drawObject.obj)
                             forwardVector = GetEntityForwardVector(drawObject.obj)
-                            forwardVector = vector3(forwardVector.x, forwardVector.y, 1)
-                            pos = pos + drawObject.offset * forwardVector
+                            forwardVector = vector3(forwardVector.x, forwardVector.y, drawObject.offset.y)
+                            pos = pos + MultiplyVec3Vec2(forwardVector, drawObject.offset, true)
                         else
                             debugObjects[type][drawObject.obj] = nil
                             pos = nil
