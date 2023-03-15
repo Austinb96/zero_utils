@@ -51,6 +51,7 @@ function PrintUtils.PrintWarning(text)
 end
 
 function PrintUtils.PrintDebug(text, color)
+    color = color or PrintColors.Violet
     if not canPrint() then return end
     PrintUtils.Print(text, color)
 end
