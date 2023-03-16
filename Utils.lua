@@ -1,4 +1,4 @@
-function MultiplyVec3Vec2(v1, v2, YbyX)
+function MultiplyVec3Vec2(v1, v2, YbyX, ZbyY)
     YbyX = YbyX or false
     local v1_is_vec3 = type(v1) == "vector3"
     local v2_is_vec3 = type(v2) == "vector3"
@@ -12,5 +12,7 @@ function MultiplyVec3Vec2(v1, v2, YbyX)
     else PrintUtils.PrintError("Trying to Multiply non-V3V2 Vectors: " .. tostring(v1) .. " " .. tostring(v2)) return nil end
 
     local y_multiplier = YbyX and vec2.x or vec2.y
-    return vector3(vec3.x * vec2.x, vec3.y * y_multiplier, vec3.z)
+    local z_multiplier = ZbyY and vec2.y or 1
+    return vector3(vec3.x * vec2.x, vec3.y * y_multiplier, vec3.z * z_multiplier)
 end
+
