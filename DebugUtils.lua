@@ -24,7 +24,7 @@ local function StartDrawing()
     CreateThread(function ()
         local pos
         local forwardVector
-        while canDebug and draw do
+        while canDebug() and draw do
             if next(debugObjects.entity) == nil and next(debugObjects.static) == nil then
                 PrintUtils.PrintDebug("No More DrawObjects")
                 draw = false
