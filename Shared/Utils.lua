@@ -16,3 +16,5 @@ function MultiplyVec3Vec2(v1, v2, YbyX, ZbyY)
     return vector3(vec3.x * vec2.x, vec3.y * y_multiplier, vec3.z * z_multiplier)
 end
 
+
+
