@@ -23,7 +23,6 @@ local draw = false
 local function StartDrawing()
     CreateThread(function ()
         local pos
-        local forwardVector
         while canDebug() and draw do
             if next(debugObjects.entity) == nil and next(debugObjects.static) == nil then
                 PrintUtils.PrintDebug("No More DrawObjects")
@@ -34,7 +33,7 @@ local function StartDrawing()
                     if(type == "entity") then
                         if DoesEntityExist(drawObject.obj) then
                             pos = Utils.GetEntityCoordsWithOffset(drawObject.obj, drawObject.offset)
-                        else
+						else
                             debugObjects[type][drawObject.obj] = nil
                             pos = nil
                         end
