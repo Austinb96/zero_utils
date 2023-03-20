@@ -10,7 +10,7 @@ local canPrint = function ()
     return false
 end
 
-PrintColors = {
+Color = {
     White = "^0",
     Red = "^1",
     Green = "^2",
@@ -35,23 +35,21 @@ PrintColors = {
 
 --// Or you can print MultiColor like this //--
 --PrintUtils.Print(PrintColors.Red .. "this will also work ".. PrintColors.DarkBlue .. "Just like this")
-
-
 function PrintUtils.Print(text, color)
     local output = ''
     local isTextATable = type(text) == "table"
     if isTextATable then
         for _, item in pairs(text) do
             text = item.text
-            color = item.color or PrintColors.White
+            color = item.color or Color.White
             output = output..color .. text .. " "
         end
     else
-        color = color or PrintColors.White
+        color = color or Color.White
         output = color..text
     end
 
-    print(output..PrintColors.White)
+    print(output..Color.White)
 end
 
 
@@ -65,7 +63,6 @@ end
 --         {text = "Print", color = PrintColors.Violet }      //next table item will print to new line
 --     }
 -- )
-
 function PrintUtils.PrintMulti(table)
     for _, item in pairs(table) do
         if type(item.text) == "string" then
@@ -79,16 +76,16 @@ end
 
 function PrintUtils.PrintError(text)
     if not canPrint() then return end
-    print(PrintColors.Red.."Error: "..text..PrintColors.White)
+    print(Color.Red.."Error: "..text..Color.White)
 end
 
 function PrintUtils.PrintWarning(text)
     if not canPrint() then return end
-    print(PrintColors.Yellow.."Warning!!: "..text..PrintColors.White)
+    print(Color.Yellow.."Warning!!: "..text..Color.White)
 end
 
 function PrintUtils.PrintDebug(text, color)
-    color = color or PrintColors.Violet
+    color = color or Color.Violet
     if not canPrint() then return end
     PrintUtils.Print("Debug: "..text, color)
 end
