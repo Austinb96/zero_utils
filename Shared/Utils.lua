@@ -1,5 +1,10 @@
 Utils = {}
-
+Direction = {
+	Right = "right",
+	Left = "left",
+	Forward = "Forward",
+	Back = "Back",
+}
 function MultiplyVec3Vec2(v1, v2, YbyX, ZbyY)
     YbyX = YbyX or false
     local v1_is_vec3 = type(v1) == "vector3"
@@ -34,16 +39,52 @@ function Utils.GetEntityRightVector(entity)
     return GetForwardVector(heading-90)
 end
 
+function Utils.GetEntityDistance(entity1, entity2,offset,AsV3)
+	local pos1 = GetEntityCoords(entity1)
+	local pos2
+	if offset then
+		pos2 = Utils.GetEntityCoordsWithOffset(entity2, offset, true)
+	else
+		pos2 = GetEntityCoords(entity2)
+	end
 
-function Utils.GetEntityCoordsWithOffset(entity, offset)
+
+	if AsV3 then
+		return pos1-pos2
+	end
+	return #(pos1 - pos2)
+end
+
+function Utils.GetEntityCoordsWithOffset(entity, offset, returnV3)
     offset = offset or vector3(0,0,0)
     local entityPos = GetEntityCoords(entity)
     local forwardVector = Utils.GetEntityForwardVector(entity)
     local rightVector = Utils.GetEntityRightVector(entity)
     local pos = entityPos + ((forwardVector * offset.y) + (rightVector * offset.x) + vector3(0, 0, offset.z))
+	if returnV3 then
+		return pos
+	end
+
     local entityHeading = GetEntityHeading(entity)
     local coords = vector4(pos.x, pos.y, pos.z, entityHeading)
     return coords
+end
+
+function Utils.CheckEntityDistance(entity1, entity2, max,offset, dir)
+	max = max or 0
+	local distance = Utils.GetEntityDistance(entity1, entity2, offset)
+
+	if not dir then
+		print("Distance of: "..distance.." Max of :"..max)
+		return max > distance
+	end
+
+	if dir == Direction.Right then
+		local v3Distance = Utils.GetEntityDistance(entity1, entity2,offset, true)
+		local entity2RightVector = Utils.GetEntityRightVector(entity2)
+		local dotProduct = (v3Distance.x * entity2RightVector.x) + (v3Distance.y * entity2RightVector.y)
+		return dotProduct > 0 and max > distance
+	end
 end
 
 
