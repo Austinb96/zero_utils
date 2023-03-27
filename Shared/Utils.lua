@@ -75,7 +75,6 @@ function Utils.CheckEntityDistance(entity1, entity2, max,offset, dir)
 	local distance = Utils.GetEntityDistance(entity1, entity2, offset)
 
 	if not dir then
-		print("Distance of: "..distance.." Max of :"..max)
 		return max > distance
 	end
 
