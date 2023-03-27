@@ -35,13 +35,13 @@ Color = {
 
 --// Or you can print MultiColor like this //--
 --PrintUtils.Print(PrintColors.Red .. "this will also work ".. PrintColors.DarkBlue .. "Just like this")
-function PrintUtils.Print(text, color)
-    local output = ''
-    local isTextATable = type(text) == "table"
-    if isTextATable then
+function PrintUtils.Print(text, color, prefix)
+    local output = (color..prefix) or ''
+	local defaultColor = color
+    if type(text) == "table" then
         for _, item in pairs(text) do
-            text = item.text
-            color = item.color or Color.White
+            text = item.text or item[1]
+            color = item.color or item[2] or defaultColor or Color.White
             output = output..color .. text .. " "
         end
     else
@@ -63,12 +63,12 @@ end
 --         {text = "Print", color = PrintColors.Violet }      //next table item will print to new line
 --     }
 -- )
-function PrintUtils.PrintMulti(table)
+function PrintUtils.PrintMulti(table,color, prefix)
     for _, item in pairs(table) do
         if type(item.text) == "string" then
-            PrintUtils.Print(item.text, item.color)
+            PrintUtils.Print(item.text, item.color, prefix)
         else
-            PrintUtils.Print(item)
+            PrintUtils.Print(item,color, prefix)
         end
     end
 end
@@ -81,16 +81,20 @@ end
 
 function PrintUtils.PrintWarning(text)
     if not canPrint() then return end
-    print(Color.Yellow.."Warning!!: "..text..Color.White)
+    PrintUtils.Print(text, Color.Yellow,"Warning!!: ")
 end
 
-function PrintUtils.PrintDebug(text, color)
-    color = color or Color.Violet
+function PrintUtils.PrintMultiWarning(table)
     if not canPrint() then return end
-    PrintUtils.Print("Debug: "..text, color)
+    PrintUtils.PrintMulti(table, Color.Yellow, "Warning: ")
+end
+
+function PrintUtils.PrintDebug(text)
+    if not canPrint() then return end
+    PrintUtils.Print(text, Color.Violet,"Debug: ")
 end
 
 function PrintUtils.PrintMultiDebug(table)
     if not canPrint() then return end
-    PrintUtils.PrintMulti(table)
+    PrintUtils.PrintMulti(table, Color.Violet, "Debug: ")
 end
