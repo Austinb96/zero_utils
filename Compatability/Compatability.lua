@@ -36,6 +36,13 @@ Notify = {
 	end,
 }
 
+--TODO add support for OX inventory items
+IfItemExists = {
+	QB = function (itemName)
+		return QBCore.Shared.Items[itemName] ~= nil
+	end,
+}
+
 Inventory = {
 	QB = {
 		HasItem = function (item, amount, src)
@@ -58,7 +65,7 @@ Inventory = {
 				PrintUtils.PrintDebug("Item Found! Items Found: "..Color.Yellow..item.."("..count..")")
 				return true
 			else
-				PrintUtils.PrintDebug("Item not Found: "..Color.Yellow..item)
+				PrintUtils.PrintDebug("Item not Found: "..Color.Yellow..tostring(item))
 				return false
 			end
 		end,
@@ -73,9 +80,24 @@ Inventory = {
 				PrintUtils.PrintDebug("Item Found! Items Found: "..Color.Yellow..item.."("..count..")")
 				return true
 			else
-				PrintUtils.PrintDebug("Item not Found: "..Color.Yellow..item)
+				PrintUtils.PrintDebug("Item not Found: "..Color.Yellow..tostring(item))
 				return false
 			end
 		end
 	}
 }
+
+
+
+
+CreateThread(function ()
+	if not Config then
+		Wait(0)
+	end
+	if Config.Inventory == Inventory.QB then
+		IfItemExists = IfItemExists.QB
+	-- elseif Config.Inventory == Inventory.OX then
+	-- 	IfItemExists = IfItemExists.OX
+	end
+end)
+
