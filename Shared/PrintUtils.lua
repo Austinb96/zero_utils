@@ -36,7 +36,9 @@ Color = {
 --// Or you can print MultiColor like this //--
 --PrintUtils.Print(PrintColors.Red .. "this will also work ".. PrintColors.DarkBlue .. "Just like this")
 function PrintUtils.Print(text, color, prefix)
-    local output = (color..prefix) or ''
+	color = color or Color.White
+	prefix = prefix or ''
+    local output = ''
 	local defaultColor = color
     if type(text) == "table" then
         for _, item in pairs(text) do
@@ -49,7 +51,7 @@ function PrintUtils.Print(text, color, prefix)
         output = color..text
     end
 
-    print(output..Color.White)
+    print(defaultColor .. prefix .. output..Color.White)
 end
 
 
