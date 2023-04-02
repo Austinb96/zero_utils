@@ -1,6 +1,6 @@
 DebugUtils = {}
 
-local canDebug = function ()
+function DebugUtils.CanDebug()
     if Config.Debuging.Debug then
         return true
     end
@@ -23,7 +23,7 @@ local draw = false
 local function StartDrawing()
     CreateThread(function ()
         local pos
-        while canDebug() and draw do
+        while DebugUtils.CanDebug() and draw do
             if next(debugObjects.entity) == nil and next(debugObjects.static) == nil then
                 PrintUtils.PrintDebug("No More DrawObjects")
                 draw = false
