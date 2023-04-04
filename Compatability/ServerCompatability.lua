@@ -2,7 +2,7 @@
 Inventory.QB.AddItem = function (src,item,amount)
 	local player = QBCore.Functions.GetPlayer(src)
 	if not player.Functions.AddItem(item, amount or 1) then
-		PrintUtils.PrintError("Item Does not Exist for Player: "..Color.Yellow..item)
+		PrintUtils.PrintError("Item Does not Exist for Player: "..Color.White..item)
 		return false
 	end
 	return true
@@ -10,7 +10,7 @@ end
 
 Inventory.QB.RemoveItem = function (src, item, amount)
 	if not QBCore.Shared.Items[item] then
-		PrintUtils.PrintError("Item Does not Exist"..Color.Yellow..item)
+		PrintUtils.PrintError("Item Does not Exist"..Color.White..item)
 		return nil
 	end
 	local player = QBCore.Functions.GetPlayer(src)
@@ -44,7 +44,7 @@ ItemSetup = {
 			PrintUtils.PrintError("Item Import Failed!: ("..message.."). Please import manualy")
 			for key, value in pairs(errorItem) do
 				if key == 'name' then
-					PrintUtils.PrintError("Item that failed: "..Color.White..value)
+					PrintUtils.PrintError("Item that failed: "..Color.White..value, true)
 				end
 			end
 		else

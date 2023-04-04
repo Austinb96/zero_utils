@@ -15,13 +15,13 @@ ItemSetup = {
 			if not QBCore.Shared.Items[key] then
 				QBCore.Shared['Items'][key] = data
 				updateItems[key] = data
-				PrintUtils.PrintDebug("Item added: "..Color.Yellow..tostring(QBCore.Shared.Items[key].name))
+				PrintUtils.PrintDebug("Item added: "..Color.White..tostring(QBCore.Shared.Items[key].name))
 			else
 				PrintUtils.PrintDebug("Item allready exists: "..Color.White..key)
 			end
 
 			if not QBCore.Shared.Items[key] then
-				PrintUtils.PrintError("Item Failed to setup! Please Manualy add items")
+				PrintUtils.PrintError("Item: "..Color.White..key.. " Failed to setup! Please Manualy add items", true)
 			end
 		end
 		TriggerEvent('QBCore:Client:OnSharedUpdateMultiple', 'Items', updateItems)

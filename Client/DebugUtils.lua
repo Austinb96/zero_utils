@@ -61,7 +61,7 @@ function DebugUtils.DrawMarker(obj, offset)
     elseif type(obj) == "vector3" or type(obj) == "vector4" then
         debugObjects.static[obj] = {obj = obj, offset = offset}
     else
-        PrintUtils.PrintError("Trying to add wrong type to drawMarker: "..tostring(obj))
+        PrintUtils.PrintError("Trying to add wrong type to drawMarker: "..Color.White..tostring(obj))
     end
 
     PrintUtils.PrintDebug("Draw Marker for: "..obj.." with offset: "..offset)
