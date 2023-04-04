@@ -13,3 +13,4 @@ function MakeBlip(blipData)
 	PrintUtils.PrintDebug("Blip Created for location: "..Color.Yellow..tostring(blipData.label))
 	return blip
 end
+

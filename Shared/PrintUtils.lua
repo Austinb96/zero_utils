@@ -42,19 +42,15 @@ function PrintUtils.Print(text, color, prefix)
 	local defaultColor = color
     if type(text) == "table" then
         for _, item in pairs(text) do
-            text = item.text or item[1]
-            color = item.color or item[2] or defaultColor or Color.White
+            text = item.text or item[1] or item
+            color = item.color or item[2] or defaultColor
             output = output..color .. text .. " "
         end
     else
-        color = color or Color.White
         output = color..text
     end
-
     print(defaultColor .. prefix .. output..Color.White)
 end
-
-
 
 
 --Used to print multiple lines of Print. eg.
@@ -65,20 +61,39 @@ end
 --         {text = "Print", color = PrintColors.Violet }      //next table item will print to new line
 --     }
 -- )
-function PrintUtils.PrintMulti(table,color, prefix)
+
+function PrintUtils.PrintMulti(table)
+	local text
+	local color
+	local prefix
     for _, item in pairs(table) do
-        if type(item.text) == "string" then
-            PrintUtils.Print(item.text, item.color, prefix)
-        else
-            PrintUtils.Print(item,color, prefix)
-        end
+		text = item.text or item[1] or item
+		color = item.color or item[2]
+		prefix = item.prefix or item[3]
+		if type(text) == "table" then
+			for _, text2 in pairs(text) do
+				PrintUtils.Print(text2, color, prefix)
+			end
+		else
+			PrintUtils.Print(text, color, prefix)
+		end
     end
 end
 
 
 function PrintUtils.PrintError(text)
-    if not canPrint() then return end
-    print(Color.Red.."Error: "..text..Color.White)
+    local trace = debug.traceback(nil,2)
+	local traceLines = {}
+    for line in trace:gmatch("[^\r\n]+") do
+        table.insert(traceLines, line)
+    end
+
+	PrintUtils.PrintMulti(
+		{
+			{text, Color.Red, "Error: "},
+			{traceLines, Color.Red, "Error: "},
+		}
+	)
 end
 
 function PrintUtils.PrintWarning(text)
@@ -99,4 +114,9 @@ end
 function PrintUtils.PrintMultiDebug(table)
     if not canPrint() then return end
     PrintUtils.PrintMulti(table, Color.Violet, "Debug: ")
+end
+
+function PrintUtils.PrintErrorDebug(text)
+    if not canPrint() then return end
+	PrintUtils.PrintError(text)
 end
