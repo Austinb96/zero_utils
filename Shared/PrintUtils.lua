@@ -81,7 +81,7 @@ function PrintUtils.PrintMulti(table)
 end
 
 
-function PrintUtils.PrintError(text)
+function PrintUtils.PrintError(text, stopexe)
     local trace = debug.traceback(nil,2)
 	local traceLines = {}
     for line in trace:gmatch("[^\r\n]+") do
@@ -94,6 +94,7 @@ function PrintUtils.PrintError(text)
 			{traceLines, Color.Red, "Error: "},
 		}
 	)
+	if stopexe then error("Critical error! Stoping Execution!", 2) end
 end
 
 function PrintUtils.PrintWarning(text)
@@ -108,7 +109,7 @@ end
 
 function PrintUtils.PrintDebug(text)
     if not canPrint() then return end
-    PrintUtils.Print(text, Color.Violet,"Debug: ")
+    PrintUtils.Print(text, Color.Green, Color.Violet.."Debug: ")
 end
 
 function PrintUtils.PrintMultiDebug(table)
