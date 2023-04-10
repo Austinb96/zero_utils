@@ -1,3 +1,8 @@
+--   ___                          ___
+--  (o o)                        (o o)
+-- (  V  )     DO NOT TOUCH     (  V  )
+-- --m-m--------------------------m-m--
+-- -UNLESS YOU KNOW WHAT YOU ARE DOING-
 --#region QB
 Inventory.QB.AddItem = function (src,item,amount)
 	local player = QBCore.Functions.GetPlayer(src)
