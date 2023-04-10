@@ -18,7 +18,7 @@ Notify = {
 		if not src then exports['t-notify']:Custom({title = title, style = type, message = message, sound = true})
 		else TriggerClientEvent('t-notify:client:Custom', src, { style = type, duration = 6000, title = title, message = message, sound = true, custom = true}) end
 	end,
-	Infinity = function (src, message, type, title)
+	Infinity = function (message, type, src, title)
 		if not src then TriggerEvent('infinity-notify:sendNotify', message, type)
 		else TriggerClientEvent('infinity-notify:sendNotify', src, message, type) end
 	end,
@@ -99,5 +99,7 @@ CreateThread(function ()
 	-- elseif Config.Inventory == Inventory.OX then
 	-- 	IfItemExists = IfItemExists.OX
 	end
+
+	Inventory = Config.Inventory
 end)
 
