@@ -41,10 +41,8 @@ Inventory = {
 		HasItem = function (item, amount, src)
 			amount = amount or 1
 			local playerData
-			if src then
-				playerData = QBCore.Players[src].PlayerData
-			else
-				playerData = QBCore.Functions.GetPlayerData()
+			if src and RequireServer() then
+			elseif RequireClient() then
 			end
 
 			local count = 0
@@ -92,8 +90,18 @@ Menu = {QB = {},
 	-- OX ={}
 }
 
--- function RequireClient()
--- 	if IsDuplicityVersion() then
--- 		PrintUtils.PrintError("This function can only be used on Client!", true)
--- 	end
--- end
+function RequireClient()
+	if IsDuplicityVersion() then
+		PrintUtils.PrintError("Called on Server when expected Client!", true)
+	else
+		return true
+	end
+end
+
+function RequireServer()
+	if not IsDuplicityVersion() then
+		PrintUtils.PrintError("Called on Client when expected Server!", true)
+	else
+		return true
+	end
+end
