@@ -87,19 +87,13 @@ Inventory = {
 	}
 }
 
+Menu = {QB = {},
+	-- --TODO add ox menu support
+	-- OX ={}
+}
 
-
-
-CreateThread(function ()
-	if not Config then
-		Wait(0)
-	end
-	if Config.Inventory == Inventory.QB then
-		IfItemExists = IfItemExists.QB
-	-- elseif Config.Inventory == Inventory.OX then
-	-- 	IfItemExists = IfItemExists.OX
-	end
-
-	Inventory = Config.Inventory
-end)
-
+-- function RequireClient()
+-- 	if IsDuplicityVersion() then
+-- 		PrintUtils.PrintError("This function can only be used on Client!", true)
+-- 	end
+-- end

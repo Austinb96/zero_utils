@@ -3,6 +3,8 @@
 -- (  V  )     DO NOT TOUCH     (  V  )
 -- --m-m--------------------------m-m--
 -- -UNLESS YOU KNOW WHAT YOU ARE DOING-
+
+--TODO add ox item support
 ItemSetup = {
 	AddItems = function (itemData)
 		if type(itemData) ~= "table" then
@@ -27,3 +29,9 @@ ItemSetup = {
 		TriggerEvent('QBCore:Client:OnSharedUpdateMultiple', 'Items', updateItems)
 	end,
 }
+
+--#region Menu
+Menu.QB.OpenMenu = function (menuData)
+	exports['qb-menu']:openMenu(menuData)
+end
+--#endregion
