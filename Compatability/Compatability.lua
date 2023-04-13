@@ -36,13 +36,6 @@ Notify = {
 	end,
 }
 
---TODO add support for OX inventory items
-IfItemExists = {
-	QB = function (itemName)
-		return QBCore.Shared.Items[itemName] ~= nil
-	end,
-}
-
 Inventory = {
 	QB = {
 		HasItem = function (item, amount, src)
@@ -69,6 +62,9 @@ Inventory = {
 				return false
 			end
 		end,
+		ItemExists = function (itemName)
+			return QBCore.Shared.Items[itemName] ~= nil
+		end
 	},
 
 	--TODO Not Tested
@@ -83,6 +79,10 @@ Inventory = {
 				PrintUtils.PrintDebug("Item not Found: "..Color.Yellow..tostring(item))
 				return false
 			end
+		end,
+
+		ItemExists = function (itemName)
+			--TODO add Support for OX Item Checking
 		end
 	}
 }
