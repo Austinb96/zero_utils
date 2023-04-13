@@ -10,6 +10,8 @@ Inventory.QB.AddItem = function (src,item,amount)
 		PrintUtils.PrintError("Item Does not Exist for Player: "..Color.White..item)
 		return false
 	end
+	TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[item], "add")
+	PrintUtils.PrintDebug("Giving Player:"..Color.White..src.." "..GetPlayerName(src).." : "..QBCore.Shared.Items[item].label.."-"..amount)
 	return true
 end
 
@@ -19,7 +21,10 @@ Inventory.QB.RemoveItem = function (src, item, amount)
 		return nil
 	end
 	local player = QBCore.Functions.GetPlayer(src)
-	return player.Functions.RemoveItem(item, amount or 1)
+	if player.Functions.RemoveItem(item, amount or 1) then
+		TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[item], "remove")
+		PrintUtils.PrintDebug("Taking from Player: "..Color.White..src..":"..GetPlayerName(src)..":"..QBCore.Shared.Items[item].label.."-"..amount)
+	end
 end
 --#endregion
 
