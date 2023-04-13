@@ -43,8 +43,10 @@ Inventory = {
 			local playerData
 			local playerName
 			if src and RequireServer() then
+				playerData = exports['qb-core']:GetCoreObject().Players[src].PlayerData
 				playerName = src..":"..GetPlayerName(src)
 			elseif RequireClient() then
+				playerData = exports['qb-core']:GetCoreObject().Functions.GetPlayerData()
 				playerName = "You"
 			end
 
@@ -66,7 +68,7 @@ Inventory = {
 		end,
 
 		ItemExists = function (itemName)
-			return QBCore.Shared.Items[itemName] ~= nil
+			return exports['qb-core']:GetCoreObject().Shared.Items[itemName] ~= nil
 		end
 	},
 
