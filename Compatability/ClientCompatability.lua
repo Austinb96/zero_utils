@@ -15,6 +15,15 @@ ItemSetup = {
 
 		for key, data in pairs(itemData) do
 			if not QBCore.Shared.Items[key] then
+				if key ~= data.name then
+					PrintUtils.PrintWarning({
+						{"Item:"},
+						{key, Color.White},
+						{"Does Not match the Name:"},
+						{data.name, Color.White},
+						{"Please fix if this is not intended"}
+					})
+				end
 				QBCore.Shared['Items'][key] = data
 				updateItems[key] = data
 				PrintUtils.PrintDebug("Item added: "..Color.White..tostring(QBCore.Shared.Items[key].name))
