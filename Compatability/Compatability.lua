@@ -41,25 +41,30 @@ Inventory = {
 		HasItem = function (item, amount, src)
 			amount = amount or 1
 			local playerData
+			local playerName
 			if src and RequireServer() then
+				playerName = src..":"..GetPlayerName(src)
 			elseif RequireClient() then
+				playerName = "You"
 			end
 
+			PrintUtils.PrintDebug("Checking "..Color.White..playerName..Color.Green.." for Item: "..Color.White..item.."-"..amount)
 			local count = 0
 			for _, itemData in pairs(playerData.items) do
 				if itemData and (itemData.name == item) then
-					PrintUtils.PrintDebug("Has Item: "..Color.Yellow..tostring(item)..Color.Violet.." Slot: "..Color.Yellow..itemData.slot..Color.Violet.."("..Color.Yellow..tostring(itemData.amount)..Color.Violet..")")
+					PrintUtils.PrintDebug("Item Found!: "..Color.White..tostring(item)..Color.Green.." Slot: "..Color.White..itemData.slot..Color.Green.."("..Color.White..tostring(itemData.amount)..Color.Green..")")
 					count += itemData.amount
 				end
 			end
 			if count >= amount then
-				PrintUtils.PrintDebug("Item Found! Items Found: "..Color.Yellow..item.."("..count..")")
+				PrintUtils.PrintDebug("Items Found!: "..Color.White..item.."("..count..")")
 				return true
 			else
-				PrintUtils.PrintDebug("Item not Found: "..Color.Yellow..tostring(item))
+				PrintUtils.PrintDebug("Item not Found: "..Color.White..tostring(item))
 				return false
 			end
 		end,
+
 		ItemExists = function (itemName)
 			return QBCore.Shared.Items[itemName] ~= nil
 		end
@@ -71,7 +76,7 @@ Inventory = {
 			src = src or PlayerPedId()
 			local count = ox_inventory:Search(src,'count', item)
 			if count >= amount then
-				PrintUtils.PrintDebug("Item Found! Items Found: "..Color.Yellow..item.."("..count..")")
+				PrintUtils.PrintDebug("Items Found!: "..Color.Yellow..item.."("..count..")")
 				return true
 			else
 				PrintUtils.PrintDebug("Item not Found: "..Color.Yellow..tostring(item))
