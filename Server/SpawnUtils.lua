@@ -15,11 +15,11 @@ function SpawnVeh(model, pos, rot)
     local plate = GetVehicleNumberPlateText(vehicle)
     PrintUtils.PrintDebug({
 		{"Vehicle spawn Info: NetId:"},
-		{netId, Color.Yellow},
+		{netId, Color.White},
 		{"Plate:"},
-		{plate, Color.Yellow},
+		{plate, Color.White},
 		{"SpawnPos:"},
-		{pos, Color.Yellow}
+		{pos, Color.White}
 	})
     return netId, plate
 end
