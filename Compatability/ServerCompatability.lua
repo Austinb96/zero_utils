@@ -4,9 +4,12 @@
 -- --m-m--------------------------m-m--
 -- -UNLESS YOU KNOW WHAT YOU ARE DOING-
 --#region QB
-Inventory.QB.AddItem = function (src,item,amount)
+Inventory.QB.AddItem = function (src, item, amount, slot, info)
+	if type(item) ~= 'string' then
+		PrintUtils.PrintError('Item is not a string. Item: '..Color.White..tostring(item))
+	end
 	local player = QBCore.Functions.GetPlayer(src)
-	if not player.Functions.AddItem(item, amount or 1) then
+	if not player.Functions.AddItem(item, amount or 1, slot, info) then
 		PrintUtils.PrintError("Item Does not Exist for Player: "..Color.White..item)
 		return false
 	end
@@ -16,6 +19,9 @@ Inventory.QB.AddItem = function (src,item,amount)
 end
 
 Inventory.QB.RemoveItem = function (src, item, amount)
+	if type(item) ~= 'string' then
+		PrintUtils.PrintError('Item is not a string. Item: '..Color.White..tostring(item))
+	end
 	if not QBCore.Shared.Items[item] then
 		PrintUtils.PrintError("Item Does not Exist"..Color.White..item)
 		return nil
@@ -24,6 +30,8 @@ Inventory.QB.RemoveItem = function (src, item, amount)
 	if player.Functions.RemoveItem(item, amount or 1) then
 		TriggerClientEvent('inventory:client:ItemBox', src, QBCore.Shared.Items[item], "remove")
 		PrintUtils.PrintDebug("Taking from Player: "..Color.White..src..":"..GetPlayerName(src)..":"..QBCore.Shared.Items[item].label.."-"..amount)
+	else
+		PrintUtils.PrintWarning(Color.White..src..":"..GetPlayerName(src)..Color.Green.." Does Not have the Item: "..Color.White..QBCore.Shared.Items[item].label.."-"..amount)
 	end
 end
 --#endregion
