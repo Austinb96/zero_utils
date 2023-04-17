@@ -97,24 +97,24 @@ function PrintUtils.PrintError(text, stopexe)
 	if stopexe then error("Critical error! Stoping Execution!", 2) end
 end
 
-function PrintUtils.PrintWarning(text)
-    if not canPrint() then return end
+function PrintUtils.PrintWarning(text, showDebug)
+    if showDebug or not canPrint() then return end
     PrintUtils.Print(text, Color.Yellow,"Warning!!: ")
 end
 
-function PrintUtils.PrintMultiWarning(table)
-    if not canPrint() then return end
+function PrintUtils.PrintMultiWarning(table, showDebug)
+    if showDebug or not canPrint() then return end
     PrintUtils.PrintMulti(table, Color.Yellow, "Warning: ")
 end
 
-function PrintUtils.PrintDebug(text)
-    if not canPrint() then return end
+function PrintUtils.PrintDebug(text, showDebug)
+    if not showDebug or not canPrint() then return end
     PrintUtils.Print(text, Color.Green, Color.Violet.."Debug: ")
 end
 
-function PrintUtils.PrintMultiDebug(table)
-    if not canPrint() then return end
-    PrintUtils.PrintMulti(table, Color.Violet, "Debug: ")
+function PrintUtils.PrintMultiDebug(table, showDebug)
+    if not showDebug or not canPrint() then return end
+    PrintUtils.PrintMulti(table, Color.Green, "Debug: ")
 end
 
 function PrintUtils.PrintTable(table, indent)
