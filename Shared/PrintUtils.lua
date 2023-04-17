@@ -62,14 +62,12 @@ end
 --     }
 -- )
 
-function PrintUtils.PrintMulti(table)
+function PrintUtils.PrintMulti(table, color, prefix)
 	local text
-	local color
-	local prefix
     for _, item in pairs(table) do
 		text = item.text or item[1] or item
-		color = item.color or item[2]
-		prefix = item.prefix or item[3]
+		color = color or item.color or item[2] or Color.White
+		prefix = prefix or item.prefix or item[3] or ""
 		if type(text) == "table" then
 			for _, text2 in pairs(text) do
 				PrintUtils.Print(text2, color, prefix)
@@ -80,14 +78,12 @@ function PrintUtils.PrintMulti(table)
     end
 end
 
-
 function PrintUtils.PrintError(text, stopexe)
     local trace = debug.traceback(nil,2)
 	local traceLines = {}
     for line in trace:gmatch("[^\r\n]+") do
         table.insert(traceLines, line)
     end
-
 	PrintUtils.PrintMulti(
 		{
 			{text, Color.Red, "Error: "},
@@ -126,6 +122,6 @@ function PrintUtils.PrintTable(table, indent)
             PrintUtils.PrintTable(v, indent+1)
         else
             print(formatting .. tostring(v))
-end
+        end
     end
 end
