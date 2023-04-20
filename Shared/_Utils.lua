@@ -86,6 +86,12 @@ function Utils.CheckEntityDistance(entity1, entity2, max,offset, dir)
 	end
 end
 
-
+function Utils.LoadModel(model)
+	if HasModelLoaded(model) then return end
+	RequestModel(model)
+	while not HasModelLoaded(model) do
+		Wait(0)
+	end
+end
 
 
