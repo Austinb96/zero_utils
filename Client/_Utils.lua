@@ -14,3 +14,7 @@ function MakeBlip(blipData)
 	return blip
 end
 
+function VehicleInitialize(veh)
+	SetVehicleFuelLevel(veh, 100.0)
+end
+

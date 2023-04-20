@@ -4,8 +4,8 @@ function SpawnVeh(model, pos, rot, src, teleportInto)
 	while not DoesEntityExist(vehicle) or not netId do
 		Wait(0)
 		if DoesEntityExist(vehicle) then
-		netId = NetworkGetNetworkIdFromEntity(vehicle)
-	end
+			netId = NetworkGetNetworkIdFromEntity(vehicle)
+		end
 	end
 
     local plate = GetVehicleNumberPlateText(vehicle)
