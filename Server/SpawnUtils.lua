@@ -1,16 +1,17 @@
-function SpawnVeh(model, pos, rot)
-    rot = rot or 0
-    local vehicle = CreateVehicle(model, pos.x, pos.y, pos.z, rot, true, true)
+function SpawnVeh(model, pos, rot, src, teleportInto)
+	model = type(model) == 'string' and GetHashKey(model) or model
+	Utils.LoadModel(model)
+    local vehicle = CreateVehicle(model, pos.x, pos.y, pos.z, rot or 0, true, true)
+	local netId = nil
+	while not DoesEntityExist(vehicle) or not netId do
+		Wait(0)
+		netId = NetworkGetNetworkIdFromEntity(vehicle)
+	end
 
-    while not DoesEntityExist(vehicle) do
-        Wait(0)
-    end
+	SetNetworkIdCanMigrate(netid, true)
+	SetVehicleFuelLevel(veh, 100.0)
 
-    local netId = nil
-    while not netId do
-        Wait(0)
-        netId = NetworkGetNetworkIdFromEntity(vehicle)
-    end
+	SetModelAsNoLongerNeeded(model)
 
     local plate = GetVehicleNumberPlateText(vehicle)
     PrintUtils.PrintDebug({
@@ -21,5 +22,7 @@ function SpawnVeh(model, pos, rot)
 		{"SpawnPos:"},
 		{pos, Color.White}
 	})
+
+	if teleportInto then TaskWarpPedIntoVehicle(src, vehicle, -1) end
     return netId, plate
 end
