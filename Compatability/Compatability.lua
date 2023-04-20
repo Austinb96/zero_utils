@@ -97,6 +97,24 @@ Menu = {QB = {},
 	-- OX ={}
 }
 
+function GetCitizenID(src)
+	local playerData
+	if src and RequireServer() then
+		playerData = exports['qb-core']:GetCoreObject().Functions.GetPlayer(src).PlayerData
+	elseif RequireClient() then
+		playerData = exports['qb-core']:GetCoreObject().Functions.GetPlayerData()
+	end
+
+	if playerData.citizenid then
+		PrintUtils.PrintDebug("CitizenId found: "..Color.White..playerData.citizenid)
+		return playerData.citizenid
+	else
+		local playerName = GetPlayerName(src or -1)
+		PrintUtils.PrintWarning("citizenId Not found! Giving Player name instead:"..Color.White..playerName)
+		return playerName
+	end
+end
+
 function RequireClient()
 	if IsDuplicityVersion() then
 		PrintUtils.PrintError("Called on Server when expected Client!", true)
