@@ -4,6 +4,7 @@
 -- --m-m--------------------------m-m--
 -- -UNLESS YOU KNOW WHAT YOU ARE DOING-
 Notify = {
+	--TODO Not Tested
 	OKOK = function (message, type, src, title)
 		if not src then	exports['okokNotify']:Alert(title, message, 6000, type)
 		else TriggerClientEvent('okokNotify:Alert', src, title, message, 6000, type) end
@@ -13,26 +14,34 @@ Notify = {
 		if not src then	TriggerEvent("QBCore:Notify", message, type)
 		else TriggerClientEvent("QBCore:Notify", src, message, type) end
 	end,
-
+	--TODO Not Tested
 	T = function (message, type, src, title)
 		if not src then exports['t-notify']:Custom({title = title, style = type, message = message, sound = true})
 		else TriggerClientEvent('t-notify:client:Custom', src, { style = type, duration = 6000, title = title, message = message, sound = true, custom = true}) end
 	end,
+	--TODO Not Tested
 	Infinity = function (message, type, src, title)
 		if not src then TriggerEvent('infinity-notify:sendNotify', message, type)
 		else TriggerClientEvent('infinity-notify:sendNotify', src, message, type) end
 	end,
+	--TODO Not Tested
 	RR = function (message, type, src, title)
 		if not src then exports.rr_uilib:Notify({msg = message, type = type, style = "dark", duration = 6000, position = "top-right", })
 		else TriggerClientEvent("rr_uilib:Notify", src, {msg = message, type = type, style = "dark", duration = 6000, position = "top-right", }) end
 	end,
+	--TODO Not Tested
 	RZ = function (message, type, src, title)
 		if not src then exports['redutzu-notify']:Notify({title = title, message = message, type = type, duration = 6000 })
 		else TriggerClientEvent('rz-notify:client:notify', source, { title = title, message = message, type = type, duration = 6000 }) end
 	end,
 	OX = function (message, type,src, title)
-		if not src then	exports.ox_lib:notify({title = title, description = message, type = type or "success"})
-		else exports.ox_lib:notify({title = title, description = message, type = type or "success"}) end
+		print("OX Notifty Called")
+		if src and RequireServer() then
+			TriggerClientEvent('ox_lib:notify', src, {title = title, description = message, type = type, duration = 5000, position = 'center-right'})
+		elseif RequireClient() then
+			print("client notify called")
+			exports.ox_lib:notify({title = title, description = message, type = type, duration = 5000, position = 'center-right'})
+		end
 	end,
 }
 
@@ -72,11 +81,14 @@ Inventory = {
 		end
 	},
 
-	--TODO Not Tested
 	OX = {
 		HasItem = function (item, amount, src)
-			src = src or PlayerPedId()
-			local count = ox_inventory:Search(src,'count', item)
+			local count
+			if src and RequireServer then
+				count = ox_inventory:Search(src,'count', item)
+			elseif RequireClient() then
+				count = ox_inventory:Search('count', item)
+			end
 			if count >= amount then
 				PrintUtils.PrintDebug("Items Found!: "..Color.Yellow..item.."("..count..")")
 				return true
@@ -88,13 +100,15 @@ Inventory = {
 
 		ItemExists = function (itemName)
 			--TODO add Support for OX Item Checking
+			if exports.ox_inventory:Items()[itemName] then return true end
+
+			return false
 		end
 	}
 }
 
-Menu = {QB = {},
+Menu = {QB = {},OX={}
 	-- --TODO add ox menu support
-	-- OX ={}
 }
 
 function GetCitizenID(src)
@@ -117,7 +131,7 @@ end
 
 function RequireClient()
 	if IsDuplicityVersion() then
-		PrintUtils.PrintError("Called on Server when expected Client!", true)
+		PrintUtils.PrintError("Called on Server when expected Client! Add src if not applied", true)
 	else
 		return true
 	end
@@ -125,7 +139,7 @@ end
 
 function RequireServer()
 	if not IsDuplicityVersion() then
-		PrintUtils.PrintError("Called on Client when expected Server!", true)
+		PrintUtils.PrintError("Called on Client when expected Server! remove src if applied", true)
 	else
 		return true
 	end
