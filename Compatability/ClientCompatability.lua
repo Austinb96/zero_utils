@@ -56,10 +56,10 @@ Menu.OX.OpenMenu = function (menuData, isDynamic)
 	-- if not menuData.id then PrintUtils.PrintError("menuData.id not found for ox! please check that everything is done correcly", true) end
 	if not OXMenuCache[menuData.id] or isDynamic then
 		OXMenuCache[menuData.id] = true
-		lib.registerContext(menuData)
+		exports.ox_lib:registerContext(menuData)
 	end
 
-	lib.showContext(menuData.id)
+	exports.ox_lib:showContext(menuData.id)
 end
 
 function ConvertMenuToOX(menuData)
