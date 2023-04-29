@@ -1,4 +1,4 @@
-function MakeBlip(blipData)
+function ZeroUtils.MakeBlip(blipData)
 	local blip = AddBlipForCoord(blipData.coords)
 
 	SetBlipAsShortRange(blip, true)
@@ -14,7 +14,7 @@ function MakeBlip(blipData)
 	return blip
 end
 
-function VehicleInitialize(veh)
+function ZeroUtils.VehicleInitialize(veh)
 	SetVehicleFuelLevel(veh, 100.0)
 end
 

@@ -1,4 +1,4 @@
-function SpawnVeh(model, pos, rot, src, teleportInto)
+function ZeroUtils.SpawnVeh(model, pos, rot, src, teleportInto)
     local vehicle = CreateVehicle(model, pos.x, pos.y, pos.z, rot or 0, true, true)
 	local netId = nil
 	while not DoesEntityExist(vehicle) or not netId do
