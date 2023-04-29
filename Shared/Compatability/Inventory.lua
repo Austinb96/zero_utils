@@ -2,7 +2,6 @@ function ZeroUtils.HasItem(scriptType, item, amount, src)
 	if type(scriptType) ~= "string" then PrintUtils.PrintError("Type is not a string: " ..tostring(scriptType)) end
 	if type(item) ~= "string" then PrintUtils.PrintError("Item is not a string: " ..tostring(item)) end
 	if type(amount) ~= "number" then PrintUtils.PrintError("Amount is not a number: " ..tostring(amount)) end
-	if type(src) ~= "number" then PrintUtils.PrintError("src is not a number: " ..tostring(src)) end
 	return Inventory[string.upper(scriptType)].HasItem(item, amount, src)
 end
 function ZeroUtils.ItemExists(scriptType, itemName)
@@ -60,7 +59,6 @@ Inventory = {
 		end,
 
 		ItemExists = function (itemName)
-			--TODO add Support for OX Item Checking
 			if exports.ox_inventory:Items()[itemName] then return true end
 
 			return false

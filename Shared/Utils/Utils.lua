@@ -1,5 +1,6 @@
 function GetPlayerData(src)
 	if src and RequireServer() then
+		if type(src) ~= "number" then PrintUtils.PrintError("src is not a number: " ..tostring(src)) end
 		return QBCore.Functions.GetPlayer(src).PlayerData
 	elseif RequireClient() then
 		return QBCore.Functions.GetPlayerData()
