@@ -1,13 +1,13 @@
 DebugUtils = {}
 
+local canDebug = {}
 function DebugUtils.CanDebug()
-    if Config.Debuging.Debug then
-        return true
-    end
-    if DevConfig and DevConfig.Debug then
-        return true
-    end
-    return false
+	local resource = GetInvokingResource() or 'utils'
+	return canDebug[resource] or false
+end
+function DebugUtils.SetCanDebug(resource, canDebugSet)
+	resource = resource or 'utils'
+	canDebug[resource] = canDebugSet
 end
 
 
@@ -15,8 +15,6 @@ local debugObjects = {
     entity = {},
     static = {}
 }
-
-
 
 local draw = false
 --TODO optimize for when you have to many objects to draw
@@ -32,7 +30,7 @@ local function StartDrawing()
                 for index, drawObject in pairs(objectsOfType) do
                     if(type == "entity") then
                         if DoesEntityExist(drawObject.obj) then
-                            pos = Utils.GetEntityCoordsWithOffset(drawObject.obj, drawObject.offset)
+                            pos = ZeroUtils.GetEntityCoordsWithOffset(drawObject.obj, drawObject.offset)
 						else
                             debugObjects[type][drawObject.obj] = nil
                             pos = nil

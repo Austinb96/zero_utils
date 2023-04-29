@@ -1,11 +1,24 @@
-Utils = {}
-Direction = {
-	Right = "right",
-	Left = "left",
-	Forward = "Forward",
-	Back = "Back",
-}
-function MultiplyVec3Vec2(v1, v2, YbyX, ZbyY)
+function GetPlayerData(src)
+	if src and RequireServer() then
+		return QBCore.Functions.GetPlayer(src).PlayerData
+	elseif RequireClient() then
+		return QBCore.Functions.GetPlayerData()
+	end
+end
+
+function ZeroUtils.GetCitizenID(src)
+	local playerData = GetPlayerData(src)
+	if playerData.citizenid then
+		PrintUtils.PrintDebug("CitizenId found: "..Color.White..playerData.citizenid)
+		return playerData.citizenid
+	else
+		local playerName = GetPlayerName(src or -1)
+		PrintUtils.PrintWarning("citizenId Not found! Giving Player name instead:"..Color.White..playerName)
+		return playerName
+	end
+end
+
+function  ZeroUtils.MultiplyVec3Vec2(v1, v2, YbyX, ZbyY)
     YbyX = YbyX or false
     local v1_is_vec3 = type(v1) == "vector3"
     local v2_is_vec3 = type(v2) == "vector3"
@@ -29,21 +42,21 @@ local function GetForwardVector(heading)
     return forwardVector
 end
 
-function Utils.GetEntityForwardVector(entity)
+function ZeroUtils.GetEntityForwardVector(entity)
     local heading = GetEntityHeading(entity)
     return GetForwardVector(heading)
 end
 
-function Utils.GetEntityRightVector(entity)
+function ZeroUtils.GetEntityRightVector(entity)
     local heading = GetEntityHeading(entity)
     return GetForwardVector(heading-90)
 end
 
-function Utils.GetEntityDistance(entity1, entity2,offset,AsV3)
+function ZeroUtils.GetEntityDistance(entity1, entity2,offset,AsV3)
 	local pos1 = GetEntityCoords(entity1)
 	local pos2
 	if offset then
-		pos2 = Utils.GetEntityCoordsWithOffset(entity2, offset, true)
+		pos2 = ZeroUtils.GetEntityCoordsWithOffset(entity2, offset, true)
 	else
 		pos2 = GetEntityCoords(entity2)
 	end
@@ -55,11 +68,11 @@ function Utils.GetEntityDistance(entity1, entity2,offset,AsV3)
 	return #(pos1 - pos2)
 end
 
-function Utils.GetEntityCoordsWithOffset(entity, offset, returnV3)
+function ZeroUtils.GetEntityCoordsWithOffset(entity, offset, returnV3)
     offset = offset or vector3(0,0,0)
     local entityPos = GetEntityCoords(entity)
-    local forwardVector = Utils.GetEntityForwardVector(entity)
-    local rightVector = Utils.GetEntityRightVector(entity)
+    local forwardVector = ZeroUtils.GetEntityForwardVector(entity)
+    local rightVector = ZeroUtils.GetEntityRightVector(entity)
     local pos = entityPos + ((forwardVector * offset.y) + (rightVector * offset.x) + vector3(0, 0, offset.z))
 	if returnV3 then
 		return pos
@@ -70,23 +83,23 @@ function Utils.GetEntityCoordsWithOffset(entity, offset, returnV3)
     return coords
 end
 
-function Utils.CheckEntityDistance(entity1, entity2, max,offset, dir)
+function ZeroUtils.CheckEntityDistance(entity1, entity2, max,offset, dir)
 	max = max or 0
-	local distance = Utils.GetEntityDistance(entity1, entity2, offset)
+	local distance = ZeroUtils.GetEntityDistance(entity1, entity2, offset)
 
 	if not dir then
 		return max > distance
 	end
 
-	if dir == Direction.Right then
-		local v3Distance = Utils.GetEntityDistance(entity1, entity2,offset, true)
-		local entity2RightVector = Utils.GetEntityRightVector(entity2)
+	if string.upper(dir) == "RIGHT" then
+		local v3Distance = ZeroUtils.GetEntityDistance(entity1, entity2,offset, true)
+		local entity2RightVector = ZeroUtils.GetEntityRightVector(entity2)
 		local dotProduct = (v3Distance.x * entity2RightVector.x) + (v3Distance.y * entity2RightVector.y)
 		return dotProduct > 0 and max > distance
 	end
 end
 
-function Utils.LoadModel(model)
+function ZeroUtils.LoadModel(model)
 	if HasModelLoaded(model) then return end
 	RequestModel(model)
 	while not HasModelLoaded(model) do

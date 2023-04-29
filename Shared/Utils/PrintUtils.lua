@@ -1,15 +1,14 @@
 PrintUtils = {}
+local canPrint = {}
 
-local canPrint = function ()
-    if Config.Debuging.PrintDebug then
-        return true
-    end
-    if DevConfig and DevConfig.PrintDebug then
-        return true
-    end
-    return false
+local function CanPrintDebug()
+	local resource = GetInvokingResource() or 'utils'
+	return canPrint[resource] or false
 end
-
+function PrintUtils.SetCanPrint(resource, canPrintDebug)
+	resource = resource or 'utils'
+	canPrint[resource] = canPrintDebug
+end
 Color = {
     White = "^0",
     Red = "^1",
@@ -19,6 +18,10 @@ Color = {
     LightBlue = "^5",
     Violet = "^6",
 }
+
+function PrintUtils.GetColors()
+	return Color
+end
 
 --Example usage of PrintUtils.Print
 
@@ -78,41 +81,41 @@ function PrintUtils.PrintMulti(table, color, prefix)
     end
 end
 
-function PrintUtils.PrintError(text, stopexe)
-    local trace = debug.traceback(nil,2)
+function PrintUtils.PrintError(text)
+    local trace = Citizen.InvokeNative(`FORMAT_STACK_TRACE` & 0xFFFFFFFF, nil, 1, Citizen.ResultAsString())
 	local traceLines = {}
     for line in trace:gmatch("[^\r\n]+") do
         table.insert(traceLines, line)
     end
+
 	PrintUtils.PrintMulti(
 		{
 			{text, Color.Red, "Error: "},
 			{traceLines, Color.Red, "Error: "},
 		}
 	)
-	if stopexe then error("Critical error! Stoping Execution!", 2) end
 end
 
 function PrintUtils.PrintWarning(text, showDebug)
-    showDebug = showDebug or canPrint()
+    showDebug = showDebug or CanPrintDebug()
     if not showDebug then return end
     PrintUtils.Print(text, Color.Yellow,"Warning!!: ")
 end
 
 function PrintUtils.PrintMultiWarning(table, showDebug)
-    showDebug = showDebug or canPrint()
+    showDebug = showDebug or CanPrintDebug()
     if not showDebug then return end
     PrintUtils.PrintMulti(table, Color.Yellow, "Warning: ")
 end
 
 function PrintUtils.PrintDebug(text, showDebug)
-	showDebug = showDebug or canPrint()
+	showDebug = showDebug or CanPrintDebug()
     if not showDebug then return end
     PrintUtils.Print(text, Color.Green, Color.Violet.."Debug: ")
 end
 
 function PrintUtils.PrintMultiDebug(table, showDebug)
-    showDebug = showDebug or canPrint()
+    showDebug = showDebug or CanPrintDebug()
     if not showDebug then return end
     PrintUtils.PrintMulti(table, Color.Green, "Debug: ")
 end
