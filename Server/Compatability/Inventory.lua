@@ -1,10 +1,17 @@
+function ZeroUtils.RemoveItem(scriptType,src, item, amount)
+	Inventory[scriptType].RemoveItem(src, item, amount)
+end
+function ZeroUtils.AddItem(scriptType,src, item, amount)
+	Inventory[scriptType].AddItem(src, item, amount)
+end
+
 --#region QB
-Inventory.QB.AddItem = function (src, item, amount, slot, info)
+Inventory.QB.AddItem = function (src, item, amount)
 	if type(item) ~= 'string' then
 		PrintUtils.PrintError('Item is not a string. Item: '..Color.White..tostring(item))
 	end
 	local player = QBCore.Functions.GetPlayer(src)
-	if not player.Functions.AddItem(item, amount or 1, slot, info) then
+	if not player.Functions.AddItem(item, amount or 1) then
 		PrintUtils.PrintError("Item Does not Exist for Player: "..Color.White..item)
 		return false
 	end
