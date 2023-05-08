@@ -2,10 +2,13 @@
 # Installation
 
 You can install zero_utils in two ways:
-1. Download: You can download the script from the repository and add it to your resources.
+1. Download: You can download the script [Here](https://github.com/Austinb96/zero_utils/archive/refs/heads/master.zip).
 2. Git Clone: Alternatively, you can use Git to clone the repository directly into your resources folder.
 ```bash
 git clone https://github.com/Austinb96/zero_utils.git
+
+--then you can update simply with
+git pull
 ```
 
 To install zero_utils, simply add it into your resources and ensure that it's loaded before any scripts that use zero_utils and after [qb].
