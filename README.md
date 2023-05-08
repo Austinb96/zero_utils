@@ -1,4 +1,3 @@
-# zero_utils
 # Installation
 
 You can install zero_utils in two ways:
