@@ -81,6 +81,7 @@ function PrintUtils.PrintMulti(table, color, prefix)
     end
 end
 
+
 function PrintUtils.PrintError(text)
     local trace = Citizen.InvokeNative(`FORMAT_STACK_TRACE` & 0xFFFFFFFF, nil, 1, Citizen.ResultAsString())
 	local traceLines = {}
@@ -96,15 +97,13 @@ function PrintUtils.PrintError(text)
 	)
 end
 
-function PrintUtils.PrintWarning(text, showDebug)
-    showDebug = showDebug or CanPrintDebug()
-    if not showDebug then return end
+function PrintUtils.PrintWarning(text, showIf)
+    if showIf and showIf == false then return end
     PrintUtils.Print(text, Color.Yellow,"Warning!!: ")
 end
 
-function PrintUtils.PrintMultiWarning(table, showDebug)
-    showDebug = showDebug or CanPrintDebug()
-    if not showDebug then return end
+function PrintUtils.PrintMultiWarning(table, showIf)
+    if showIf and showIf == false then return end
     PrintUtils.PrintMulti(table, Color.Yellow, "Warning: ")
 end
 
