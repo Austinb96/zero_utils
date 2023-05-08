@@ -1,8 +1,8 @@
-function ZeroUtils.RemoveItem(scriptType,src, item, amount)
-	Inventory[scriptType].RemoveItem(src, item, amount)
+function ZeroUtils.RemoveItem(src, item, amount)
+	Inventory[GetKey().Inventory].RemoveItem(src, item, amount)
 end
-function ZeroUtils.AddItem(scriptType,src, item, amount)
-	Inventory[scriptType].AddItem(src, item, amount)
+function ZeroUtils.AddItem(src, item, amount)
+	Inventory[GetKey().Inventory].AddItem(src, item, amount)
 end
 
 --#region QB

@@ -1,7 +1,7 @@
 local OXMenuCache = {}
 
-function ZeroUtils.OpenMenu(type, menuData, isDynamic)
-	Menu[string.upper(type)].OpenMenu(menuData, isDynamic)
+function ZeroUtils.OpenMenu(menuData, isDynamic)
+	Menu[GetKey().Inventory].OpenMenu(menuData, isDynamic)
 end
 
 Menu = {

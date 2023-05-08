@@ -1,4 +1,17 @@
 QBCore = exports['qb-core']:GetCoreObject()
+local defaultKeys = {
+	Notify = "QB",
+	Inventory = "QB",
+	Menu = "QB",
+}
+local cachedKeys = {}
+function GetKey()
+	local resource = GetInvokingResource()
+	if resource and cachedKeys[resource] then
+		return cachedKeys[resource]
+	else return defaultKeys end
+end
+
 local debug_getinfo = debug.getinfo
 ZeroUtils = setmetatable({
     name = 'zero_utils',
@@ -11,6 +24,20 @@ ZeroUtils = setmetatable({
         end
     end
 })
+
+function ZeroUtils.SetUp(config)
+	PrintUtils.PrintDebug("Setting Up ZeroUtils!")
+	local resource = GetInvokingResource()
+	if resource then
+		cachedKeys[resource] = {
+			Notify = string.upper(config.Notify or defaultKeys.Notify),
+			Inventory = string.upper(config.Inventory or defaultKeys.Inventory),
+			Menu = string.upper(config.Menu or defaultKeys.Menu)
+		}
+	end
+
+	PrintUtils.PrintDebug("SetUp Complete!")
+end
 
 function ZeroUtils.GetPrintUtils(canPrintDebug)
 	local resource = GetInvokingResource()

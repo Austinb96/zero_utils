@@ -1,13 +1,24 @@
-function ZeroUtils.HasItem(scriptType, item, amount, src)
-	if type(scriptType) ~= "string" then PrintUtils.PrintError("Type is not a string: " ..tostring(scriptType)) end
+function ZeroUtils.HasItem(item, amount, src)
 	if type(item) ~= "string" then PrintUtils.PrintError("Item is not a string: " ..tostring(item)) end
-	if type(amount) ~= "number" then PrintUtils.PrintError("Amount is not a number: " ..tostring(amount)) end
-	return Inventory[string.upper(scriptType)].HasItem(item, amount, src)
+	if type(amount) ~= "number" then
+		local newAmount = tonumber(amount)
+		if not newAmount then
+			PrintUtils.PrintError("Amount is not a number: " ..tostring(amount)..":"..type(amount))
+		end
+
+		amount = newAmount
+	end
+	return Inventory[GetKey().Inventory].HasItem(item, amount, src)
 end
-function ZeroUtils.ItemExists(scriptType, itemName)
-	if type(scriptType) ~= "string" then PrintUtils.PrintError("Type is not a string: " ..tostring(scriptType)) end
+
+function ZeroUtils.ItemExists(itemName)
 	if type(itemName) ~= "string" then PrintUtils.PrintError("ItemName is not a string: " ..tostring(itemName)) end
-	return Inventory[string.upper(scriptType)].ItemExists(itemName)
+	local itemExists, item = Inventory[GetKey().Inventory].ItemExists(itemName)
+	if itemExists then
+		return itemExists, item
+	else
+		PrintUtils.PrintError("Item Not Found: "..itemName)
+	end
 end
 
 Inventory = {
@@ -15,7 +26,7 @@ Inventory = {
 		HasItem = function (item, amount, src)
 			amount = amount or 1
 			local playerData = GetPlayerData(src)
-			local playerName = GetPlayerName(src) or "You"
+			local playerName = (src and GetPlayerName(src)) or "You"
 
 			PrintUtils.PrintDebug("Checking "..Color.White..playerName..Color.Green.." for Item: "..Color.White..item.."-"..amount)
 			local count = 0
@@ -35,13 +46,13 @@ Inventory = {
 		end,
 
 		ItemExists = function (itemName)
-			return QBCore.Shared.Items[itemName] ~= nil
-		end
+			return QBCore.Shared.Items[itemName] ~= nil , QBCore.Shared.Items[itemName]
+		end,
 	},
 
 	OX = {
 		HasItem = function (item, amount, src)
-			local playerName = GetPlayerName(src) or "You"
+			local playerName = (src and GetPlayerName(src)) or "You"
 			PrintUtils.PrintDebug("Checking "..Color.White..playerName..Color.Green.." for Item: "..Color.White..item.."-"..amount)
 			local count
 			if src and RequireServer() then
@@ -59,8 +70,9 @@ Inventory = {
 		end,
 
 		ItemExists = function (itemName)
-			if exports.ox_inventory:Items()[itemName] then return true end
-
+			if exports.ox_inventory:Items()[itemName] then
+				return true and exports.ox_inventory:Items()[itemName]
+			end
 			return false
 		end
 	}
