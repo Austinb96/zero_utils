@@ -93,7 +93,7 @@ end
 ---@usage
 --- Example 1: PrintUtils.PrintError("This is an Error")
 function PrintUtils.PrintError(text)
-    local trace = Citizen.InvokeNative(`FORMAT_STACK_TRACE` & 0xFFFFFFFF, nil, 1, Citizen.ResultAsString())
+    local trace = Citizen.InvokeNative(`FORMAT_STACK_TRACE` & 0xFFFFFFFF, nil, 0, Citizen.ResultAsString())
 	local traceLines = {}
     for line in trace:gmatch("[^\r\n]+") do
         table.insert(traceLines, line)
@@ -108,11 +108,12 @@ function PrintUtils.PrintError(text)
 end
 
 
+
 --- Print Warning in Yellow text and "Warning!:" prefix
 --- - (Optional)`showIf` (`boolean`): boolean to pass in if you want the option to hide
 --- -
----@param text string
----@param showIf boolean
+---@param text string|table
+---@param showIf? boolean
 ---@usage
 --- Example 1: PrintUtils.PrintWarning("This is an Warning!")
 function PrintUtils.PrintWarning(text, showIf)
@@ -123,8 +124,8 @@ end
 --- Print Warning in Yellow text and "Warning!:" prefix for multiple lines
 --- - (Optional)`showIf` (`boolean`): boolean to pass in if you want the option to hide
 --- -
----@param table string
----@param showIf boolean
+---@param table table
+---@param showIf? boolean
 ---@see PrintUtils.PrintMulti
 function PrintUtils.PrintMultiWarning(table, showIf)
     if showIf and showIf == false then return end
@@ -135,8 +136,8 @@ end
 --- Print Debug in Green text and "Debug:" prefix
 --- - (Optional)`showDebug` (`boolean`): option to overwrite bool from when printutils was setup
 --- -
----@param text string
----@param showIf boolean
+---@param text string|table
+---@param showDebug? boolean
 ---@usage
 --- Example 1: PrintUtils.PrintDebug("This is an Debug Message")
 function PrintUtils.PrintDebug(text, showDebug)
@@ -150,7 +151,7 @@ end
 --- - (Optional)`showDebug` (`boolean`): option to overwrite bool from when printutils was setup
 --- -
 ---@param table table
----@param showDebug boolean
+---@param showDebug? boolean
 ---@see PrintUtils.PrintMulti
 function PrintUtils.PrintMultiDebug(table, showDebug)
     showDebug = showDebug or CanPrintDebug()
