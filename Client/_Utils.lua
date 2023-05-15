@@ -10,7 +10,7 @@ function ZeroUtils.MakeBlip(blipData)
 	BeginTextCommandSetBlipName('STRING')
 	AddTextComponentString(tostring(blipData.label))
 	EndTextCommandSetBlipName(blip)
-	PrintUtils.PrintDebug("Blip Created for location: "..Color.White..tostring(blipData.label))
+	PrintUtils.PrintDebug("Blip Created for location: %s", blipData.label)
 	return blip
 end
 

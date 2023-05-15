@@ -1,5 +1,5 @@
 ---@alias NotificationPosition 'top' | 'top-right' | 'top-left' | 'bottom' | 'bottom-right' | 'bottom-left' | 'center-right' | 'center-left'
----@alias NotificationType 'info' | 'warning' | 'success' | 'error'
+---@alias NotificationType 'primary'| 'info' | 'warning' | 'success' | 'error'
 
 ---@class NotifyData
 ---@field src? number Player's server ID
@@ -19,7 +19,7 @@
 ---@param data NotifyData
 ---@see NotifyData
 function ZeroUtils.Notify(data)
-	if type(data) ~= "table" then PrintUtils.PrintError("Data is not a table!: "..tostring(data)..":"..type(data))end
+	ZeroUtils.AssterType(data, "table")
 	Notify[GetKey().Notify](data)
 end
 

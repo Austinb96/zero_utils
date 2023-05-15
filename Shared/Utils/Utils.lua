@@ -108,4 +108,19 @@ function ZeroUtils.LoadModel(model)
 	end
 end
 
+function ZeroUtils.AssertType(value, types)
+    local valueType = type(value)
+    if valueType == types then
+        return
+    end
+    if type(types) == "table" then
+        for _, v in ipairs(types) do
+            if valueType == v then
+                return
+            end
+        end
+		types = table.concat(types, "/")
+    end
+    error(string.format("Expected %s, but got %s", types, valueType))
+end
 

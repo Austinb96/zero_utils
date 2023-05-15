@@ -1,18 +1,16 @@
 function ZeroUtils.HasItem(item, amount, src)
-	if type(item) ~= "string" then PrintUtils.PrintError("Item is not a string: " ..tostring(item)) end
+	amount = amount or 1
+	ZeroUtils.AssterType(item, "string")
 	if type(amount) ~= "number" then
 		local newAmount = tonumber(amount)
-		if not newAmount then
-			PrintUtils.PrintError("Amount is not a number: " ..tostring(amount)..":"..type(amount))
-		end
-
+		ZeroUtils.AssertType(newAmount, "number")
 		amount = newAmount
 	end
 	return Inventory[GetKey().Inventory].HasItem(item, amount, src)
 end
 
 function ZeroUtils.ItemExists(itemName)
-	if type(itemName) ~= "string" then PrintUtils.PrintError("ItemName is not a string: " ..tostring(itemName)) end
+	ZeroUtils.AssertType(itemName, "string")
 	local itemExists, item = Inventory[GetKey().Inventory].ItemExists(itemName)
 	if itemExists then
 		return itemExists, item
