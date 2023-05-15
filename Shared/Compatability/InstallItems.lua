@@ -1,3 +1,3 @@
-function ZeroUtils.InstallItems(scriptType,items)
-	InstallItems[string.upper(scriptType)](items)
+function ZeroUtils.InstallItems(items)
+	InstallItems[GetKey().Inventory](items)
 end
