@@ -124,3 +124,20 @@ function ZeroUtils.AssertType(value, types)
     error(string.format("Expected %s, but got %s", types, valueType))
 end
 
+function ZeroUtils.EntityExist(entity)
+	local time = 0
+	while not DoesEntityExist(entity) do
+		Wait(0)
+		time = time + 1
+		if DoesEntityExist(entity) then
+			PrintUtils.PrintDebug("Entity Found: %s", entity)
+			return true
+		end
+		if time > 3000 then
+			PrintUtils.PrintError("Entity Not Found: %s", entity)
+			return false
+		end
+	end
+end
+
+
