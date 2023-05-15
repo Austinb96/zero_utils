@@ -119,7 +119,7 @@ function PrintUtils.PrintWarning(text, ...)
         return
     end
 
-    local prefix = "Warning!: "
+    local prefix = "Warning!("..GetInvokingResource().."): "
     local prefixColor = Color.Yellow
     local formatedText = getFormattedText(text, args, prefixColor)
 
@@ -135,7 +135,7 @@ end
 ---@see PrintUtils.PrintMulti
 function PrintUtils.PrintMultiWarning(table, showIf)
     if showIf and showIf == false then return end
-    PrintUtils.PrintMulti(table, {color = Color.Yellow,prefix = "Warning!:", prefixColor = Color.Yellow})
+    PrintUtils.PrintMulti(table, {color = Color.Yellow,prefix = "Warning!("..GetInvokingResource().."):", prefixColor = Color.Yellow})
 end
 
 
@@ -155,7 +155,7 @@ function PrintUtils.PrintDebug(text,...)
     end
     if not CanPrintDebug(showIf) then return end
 
-    local prefix = Color.Violet.."Debug: "
+    local prefix = Color.Violet.."Debug("..GetInvokingResource().."): "
     local textColor = Color.Green
     local formatedText = getFormattedText(text, args, textColor)
 
@@ -173,7 +173,7 @@ function PrintUtils.PrintMultiDebug(table, showDebug)
     showDebug = showDebug or CanPrintDebug()
 
     if not showDebug then return end
-    PrintUtils.PrintMulti(table,{color = Color.Green, prefix = "Debug:", prefixColor = Color.Violet})
+    PrintUtils.PrintMulti(table,{color = Color.Green, prefix = "Debug("..GetInvokingResource().."):", prefixColor = Color.Violet})
 end
 
 ---Prints out a table for debuging
