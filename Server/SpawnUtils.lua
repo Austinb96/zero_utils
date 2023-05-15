@@ -11,14 +11,7 @@ function ZeroUtils.SpawnVeh(model, pos, rot, src, teleportInto)
     local plate = GetVehicleNumberPlateText(vehicle)
 	if teleportInto then TaskWarpPedIntoVehicle(src, vehicle, -1) end
 
-    PrintUtils.PrintDebug({
-		{"Vehicle spawn Info: NetId:"},
-		{netId, Color.White},
-		{"Plate:"},
-		{plate, Color.White},
-		{"SpawnPos:"},
-		{pos, Color.White}
-	})
+    PrintUtils.PrintDebug("Vehicle Spawned: NetId: %s Plate: %s SpawnPos: %s",netId, plate, pos)
 
     return netId, plate
 end

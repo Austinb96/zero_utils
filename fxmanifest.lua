@@ -7,6 +7,7 @@ game "gta5"
 lua54 'yes'
 
 shared_scripts {
+	'PrintUtils.lua',
 	'Shared/init.lua',
 	'Shared/Utils/*.lua',
 	'Shared/Compatability/*.lua'

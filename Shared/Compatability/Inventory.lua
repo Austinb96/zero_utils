@@ -17,7 +17,7 @@ function ZeroUtils.ItemExists(itemName)
 	if itemExists then
 		return itemExists, item
 	else
-		PrintUtils.PrintError("Item Not Found: "..itemName)
+		PrintUtils.PrintError("Item Not Found: %s",itemName)
 	end
 end
 
@@ -28,19 +28,19 @@ Inventory = {
 			local playerData = GetPlayerData(src)
 			local playerName = (src and GetPlayerName(src)) or "You"
 
-			PrintUtils.PrintDebug("Checking "..Color.White..playerName..Color.Green.." for Item: "..Color.White..item.."-"..amount)
+			PrintUtils.PrintDebug("Checking %s for Item: %s(%s)",playerName,item,amount)
 			local count = 0
 			for _, itemData in pairs(playerData.items) do
 				if itemData and (itemData.name == item) then
-					PrintUtils.PrintDebug("Item Found!: "..Color.White..tostring(item)..Color.Green.." Slot: "..Color.White..itemData.slot..Color.Green.."("..Color.White..tostring(itemData.amount)..Color.Green..")")
+					PrintUtils.PrintDebug("Item Found!: %s Slot: %s(%s)",item,itemData.slot,itemData.amount)
 					count += itemData.amount
 				end
 			end
 			if count >= amount then
-				PrintUtils.PrintDebug("Items Found!: "..Color.White..item.."("..count..")")
+				PrintUtils.PrintDebug("Items Found!: %s(%s)", item, count)
 				return true
 			else
-				PrintUtils.PrintDebug("Item not Found: "..Color.White..tostring(item))
+				PrintUtils.PrintDebug("Item not Found: %s",item)
 				return false
 			end
 		end,
@@ -53,7 +53,7 @@ Inventory = {
 	OX = {
 		HasItem = function (item, amount, src)
 			local playerName = (src and GetPlayerName(src)) or "You"
-			PrintUtils.PrintDebug("Checking "..Color.White..playerName..Color.Green.." for Item: "..Color.White..item.."-"..amount)
+			PrintUtils.PrintDebug("Checking %s for Item: %s(%s)",playerName,item,amount)
 			local count
 			if src and RequireServer() then
 				count = exports.ox_inventory:Search(src,'count', item)
@@ -61,10 +61,10 @@ Inventory = {
 				count = exports.ox_inventory:Search('count', item)
 			end
 			if count >= amount then
-				PrintUtils.PrintDebug("Items Found!: "..Color.Yellow..item.."("..count..")")
+				PrintUtils.PrintDebug("Items Found!: %s (%s)", item, count)
 				return true
 			else
-				PrintUtils.PrintDebug("Item not Found: "..Color.Yellow..tostring(item))
+				PrintUtils.PrintDebug("Item not Found: %s",item)
 				return false
 			end
 		end,

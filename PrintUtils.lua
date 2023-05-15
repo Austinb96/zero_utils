@@ -1,7 +1,8 @@
 PrintUtils = {}
 local canPrint = {}
 
-local function CanPrintDebug()
+local function CanPrintDebug(overwrite)
+    if overwrite then return overwrite end
 	local resource = GetInvokingResource() or 'utils'
 	return canPrint[resource] or false
 end
@@ -23,66 +24,53 @@ function PrintUtils.GetColors()
 	return Color
 end
 
---- @alias ColorTypes '^0' | '^1' | '^2' | '^3' | '^4' | '^5' | '^6'
-
---- - `text` (`string|table`)
---- - (Optional)`color` (`string | Color`): color for entire print line
---- - (Optional)`prefix` (`string`): Prefix for print line
---- -
----@param text string|table
----@param color? ColorTypes
----@param prefix? string
----@usage
---- Example 1: PrintUtils.Print("Hello", Color.Red)
---- -
----@usage
---- Example 2: PrintUtils.Print({"Hello", Color.Red}, nil, "ExamplePrefix:")
---- -
----@usage
---- Example 3: PrintUtils.Print({{"Hello"},{"World", Color.Yellow}}, Color.Red)
-function PrintUtils.Print(text, color, prefix)
-	color = color or Color.White
-	prefix = prefix.." " or ''
-    local output = ''
-	local defaultColor = color
-    if type(text) == "table" then
-        for _, item in pairs(text) do
-            text = item.text or item[1] or item
-            color = item.color or item[2] or defaultColor
-            output = output..color .. text .. " "
-        end
-    else
-        output = color..text
+local function getFormattedText(text, args, textColor)
+    if not args then return textColor..text end
+    local formattedArgs = {Color.LightBlue.."nil"..textColor}
+    local arg
+    for i = 1, #args do
+        arg = tostring(args[i])
+        formattedArgs[i] = Color.LightBlue..arg..textColor
     end
-    print(defaultColor .. prefix .. output..Color.White)
+    return string.format(textColor..text..Color.White, table.unpack(formattedArgs))
 end
 
+--- @alias ColorTypes '^0' | '^1' | '^2' | '^3' | '^4' | '^5' | '^6'
+
+---@class options
+---@field color? ColorTypes
+---@field prefix? string
+---@field prefixColor? ColorTypes
 --- Will print text to multiple lines
+--- -
+--- options available are:
 --- - (Optional)`color` (`string | Color`): color for entire print lines
 --- - (Optional)`prefix` (`string`): Prefix for print lines
+--- - (Optional)`prefixColor` (`string`): Color for prefix
 --- -
 ---@param table table
----@param color? ColorTypes
----@param prefix? string
+---@param options? options
 ---@usage
---- Example 1: PrintUtils.PrintMulti({"Hello", Color.Red}, nil, "ExamplePrefix:")
+--- Example 1: PrintUtils.PrintMulti({"Hello", color = Color.Red},{"World"})
 --- -
 ---@usage
---- Example 2: PrintUtils.PrintMulti({{"Hello"},{"World", Color.Yellow}}, Color.Red)
-function PrintUtils.PrintMulti(table, color, prefix)
-	if type(table) ~= "table" then PrintUtils.PrintError("Expected table got: "..Color.white..type(table)..":"..tostring(table))end
-	local text
+--- Example 2: PrintUtils.PrintMulti({{"Hello"},{"%s",args={"World"}}}, {color = Color.Red, prefix = "ExamplePrefix:"})
+function PrintUtils.PrintMulti(table, options)
+    ZeroUtils.AssertType(table, "table")
+    options = {
+        color = options and options.color or Color.White,
+        prefix = options and options.prefix or "",
+        prefixColor = options and options.prefixColor or Color.White,
+    }
+    local formattedText = ""
     for _, item in pairs(table) do
-		text = item.text or item[1] or item
-		color = color or item.color or item[2] or Color.White
-		prefix = prefix or item.prefix or item[3] or ""
-		if type(text) == "table" then
-			for _, text2 in pairs(text) do
-				PrintUtils.Print(text2, color, prefix)
-			end
-		else
-			PrintUtils.Print(text, color, prefix)
-		end
+        if type(item) == "table" then
+            formattedText = getFormattedText(item[1], item.args, item.color or options.color)
+
+            print(options.prefixColor..options.prefix.." "..formattedText)
+        else
+            print(options.prefixColor..options.prefix.." "..options.color..item)
+        end
     end
 end
 
@@ -92,71 +80,95 @@ end
 ---@param text string
 ---@usage
 --- Example 1: PrintUtils.PrintError("This is an Error")
-function PrintUtils.PrintError(text)
-    local trace = Citizen.InvokeNative(`FORMAT_STACK_TRACE` & 0xFFFFFFFF, nil, 0, Citizen.ResultAsString())
-	local traceLines = {}
-    for line in trace:gmatch("[^\r\n]+") do
-        table.insert(traceLines, line)
-    end
+--- -
+---@usage
+--- Example 2: PrintUtils.PrintError("This is a %s Error", "Cool")
+function PrintUtils.PrintError(text, ...)
+    local args = {...}
 
-	PrintUtils.PrintMulti(
-		{
-			{text, Color.Red, "Error: "},
-			{traceLines, Color.Red, "Error:"},
-		}
-	)
+    local prefix = "Error!: "
+    local prefixColor = Color.Red
+    local formatedText = getFormattedText(text, args, prefixColor)
+
+    error(prefixColor..prefix..formatedText, 2)
 end
 
 
 
 --- Print Warning in Yellow text and "Warning!:" prefix
---- - (Optional)`showIf` (`boolean`): boolean to pass in if you want the option to hide
+--- - (Optional)`last arg` (`boolean`): Pass in a bool as last arg to show/hide warning
 --- -
----@param text string|table
----@param showIf? boolean
+---@param text string
+---@param ...? any
 ---@usage
 --- Example 1: PrintUtils.PrintWarning("This is an Warning!")
-function PrintUtils.PrintWarning(text, showIf)
-    if showIf and showIf == false then return end
-    PrintUtils.Print(text, Color.Yellow,"Warning!:")
+--- -
+---@usage
+--- Example 2: PrintUtils.PrintWarning("This is an %s Warning!", "Fancy", true)
+function PrintUtils.PrintWarning(text, ...)
+    local args = {...}
+    local showIf = args[#args]
+
+
+    if type(showIf) == "boolean" and showIf == false then
+        return
+    end
+
+    local prefix = "Warning!: "
+    local prefixColor = Color.Yellow
+    local formatedText = getFormattedText(text, args, prefixColor)
+
+    -- PrintUtils.Print(formatedText, prefixColor ,prefix)
+    print(prefixColor..prefix..formatedText)
 end
 
 --- Print Warning in Yellow text and "Warning!:" prefix for multiple lines
---- - (Optional)`showIf` (`boolean`): boolean to pass in if you want the option to hide
+--- - (Optional)`showIf` (`boolean`): pass in bool to show/hide warning
 --- -
 ---@param table table
 ---@param showIf? boolean
 ---@see PrintUtils.PrintMulti
 function PrintUtils.PrintMultiWarning(table, showIf)
     if showIf and showIf == false then return end
-    PrintUtils.PrintMulti(table, Color.Yellow, "Warning!:")
+    PrintUtils.PrintMulti(table, {color = Color.Yellow,prefix = "Warning!:", prefixColor = Color.Yellow})
 end
 
 
 --- Print Debug in Green text and "Debug:" prefix
---- - (Optional)`showDebug` (`boolean`): option to overwrite bool from when printutils was setup
+--- - (Optional)`last arg` (`boolean`): Pass in a bool as last arg to overwrite show/hide debug
 --- -
----@param text string|table
----@param showDebug? boolean
+---@param text string
 ---@usage
 --- Example 1: PrintUtils.PrintDebug("This is an Debug Message")
-function PrintUtils.PrintDebug(text, showDebug)
-	showDebug = showDebug or CanPrintDebug()
-    if not showDebug then return end
-    PrintUtils.Print(text, Color.Green, Color.Violet.."Debug:")
+function PrintUtils.PrintDebug(text,...)
+    local args = {...}
+    local showIf = args[#args]
+    if type(showIf) == "boolean" then
+        args[#args] = nil
+    else
+        showIf = nil
+    end
+    if not CanPrintDebug(showIf) then return end
+
+    local prefix = Color.Violet.."Debug: "
+    local textColor = Color.Green
+    local formatedText = getFormattedText(text, args, textColor)
+
+    print(prefix..formatedText)
 end
 
 
 --- Print Debug in Green text and "Debug:" prefix
---- - (Optional)`showDebug` (`boolean`): option to overwrite bool from when printutils was setup
+--- - (Optional)`showDebug` (`boolean`): pass in bool to show/hide debug
 --- -
 ---@param table table
 ---@param showDebug? boolean
 ---@see PrintUtils.PrintMulti
 function PrintUtils.PrintMultiDebug(table, showDebug)
     showDebug = showDebug or CanPrintDebug()
+
     if not showDebug then return end
-    PrintUtils.PrintMulti(table, Color.Green, "Debug:")
+    PrintUtils.PrintMulti(table,{color = Color.Green, prefix = "Debug:", prefixColor = Color.Violet})
 end
 
 ---Prints out a table for debuging

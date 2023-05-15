@@ -5,16 +5,16 @@ InstallItems = {
 			if not QBCore.Shared.Items[key] then
 				AddItems[key] = data
 			else
-				PrintUtils.PrintWarning("Item allready exists: "..Color.White..key)
+				PrintUtils.PrintWarning("Item allready exists: %s",key)
 			end
 		end
 
 		local bool, message, errorItem = QBCore.Functions.AddItems(AddItems)
 		if not bool then
-			PrintUtils.PrintError("Item Import Failed!: ("..message.."). Please import manualy")
+			PrintUtils.PrintError("Item Import Failed!: %s. Please import manualy", message)
 			for key, value in pairs(errorItem) do
 				if key == 'name' then
-					PrintUtils.PrintError("Item that failed: "..Color.White..value)
+					PrintUtils.PrintError("Item that failed: %s",value)
 				end
 			end
 		else

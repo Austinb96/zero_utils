@@ -1,6 +1,6 @@
 function GetPlayerData(src)
 	if src and RequireServer() then
-		if type(src) ~= "number" then PrintUtils.PrintError("src is not a number: " ..tostring(src)) end
+		ZeroUtils.AssertType(src, "number")
 		return QBCore.Functions.GetPlayer(src).PlayerData
 	elseif RequireClient() then
 		return QBCore.Functions.GetPlayerData()
@@ -10,11 +10,11 @@ end
 function ZeroUtils.GetCitizenID(src)
 	local playerData = GetPlayerData(src)
 	if playerData.citizenid then
-		PrintUtils.PrintDebug("CitizenId found: "..Color.White..playerData.citizenid)
+		PrintUtils.PrintDebug("CitizenId found: %s",playerData.citizenid)
 		return playerData.citizenid
 	else
 		local playerName = GetPlayerName(src or -1)
-		PrintUtils.PrintWarning("citizenId Not found! Giving Player name instead:"..Color.White..playerName)
+		PrintUtils.PrintWarning("citizenId Not found! Giving Player name instead: %s",playerName)
 		return playerName
 	end
 end
@@ -30,7 +30,7 @@ function  ZeroUtils.MultiplyVec3Vec2(v1, v2, YbyX, ZbyY)
     if v1_is_vec3 and v2_is_vec2 then vec3,vec2 = v1,v2
     elseif v1_is_vec2 and v2_is_vec3 then vec3,vec2 = v2,v1
     elseif (v1_is_vec3 and v2_is_vec3) or (v1_is_vec2 and v2_is_vec2) then return v1*v2
-    else PrintUtils.PrintError("Trying to Multiply non-V3V2 Vectors: " ..Color.White.. tostring(v1) .. " " .. tostring(v2)) return nil end
+    else PrintUtils.PrintError("Trying to Multiply non-V3V2 Vectors: %s - %s" , v1, v2) return nil end
 
     local y_multiplier = YbyX and vec2.x or vec2.y
     local z_multiplier = ZbyY and vec2.y or 1
