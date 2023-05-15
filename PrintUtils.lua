@@ -29,7 +29,12 @@ local function getFormattedText(text, args, textColor)
     local formattedArgs = {Color.LightBlue.."nil"..textColor}
     local arg
     for i = 1, #args do
-        arg = tostring(args[i])
+        arg = args[i]
+        if type(arg) == "table" then
+            arg = Color.LightBlue..table.concat(arg,",")..textColor
+        else
+            tostring(arg)
+        end
         formattedArgs[i] = Color.LightBlue..arg..textColor
     end
     return string.format(textColor..text..Color.White, table.unpack(formattedArgs))
