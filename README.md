@@ -1,86 +1,29 @@
-# Installation
+# PrintUtils Documentation
 
-You can install zero_utils in two ways:
-1. Download: You can download the script [Here](https://github.com/Austinb96/zero_utils/archive/refs/heads/master.zip).
-2. Git Clone: Alternatively, you can use Git to clone the repository directly into your resources folder.
-```bash
-git clone https://github.com/Austinb96/zero_utils.git
+## Installation
 
---then you can update simply with
-git pull
-```
-
-To install zero_utils, simply add it into your resources and ensure that it's loaded before any scripts that use zero_utils and after [qb].
+If you wish to prevent debug prints in a live environment you can use this convar in the server.cfg
 ```lua
-ensure [qb]
-ensure [standalone]
-ensure [voice]
-ensure [defaultmaps]
-
-ensure zero_utils
---scripts that uses zero_utils --
+    setr DisableDebug true
 ```
-
-
-# Developers
-
-To access zero_utils functions, you can export it like so:
+### Using Import
 ```lua
-exports.zero_utils:GetForwardVector(180)
+    shared_scripts {
+        -- 'config/*.lua',  --make you config load first
+        '@zero_utils/init.lua',
+    }
+    --for debug add Config.Debug.PrintDebug for debug prints to to show up when true
+    Config = {
+        Debug = {
+            PrintDebug = true,
+        }
+    }
 
---or you can do something like this
---I would also put this in shared.lua
-
-ZeroUtils = exports.zero_utils
-ZeroUtils:GetForwardVector(180)
+    --examples
+    printdb("Hello %s", "world")  --will print "Hello World" only if you pass in a true value to the export
+    printdb(true, "Hello %s", "world")  --will print "Hello World" will print regardless of whats passed if if first arg is true
+    printerr("This is an %s Error", "cool") -- will throw an error with set formatting.
+    printwarn("This is a %s warning", "final") -- will throw a warning with set formatting
+    printtable(Config) --will print out a table with pretty colors
+    Color  --a list of colors available if you ever want to use them in prints
 ```
-
-All functions will default to QB, so to overwrite them you can either change them inside zero_utils or use the SetUp function.
-```lua
-Config = {
-    Notify = "QB",
-    Inventory = "QB",
-    Menu = "QB",
-    ...ect
-}
-ZeroUtils:SetUp(Config)
-
---or
-
-ZeroUtils:SetUp({
-    Notify = "QB",
-    Inventory = "QB",
-    Menu = "QB",
-    ...ect
-})
-```
-### VSCode Autocomplete
-
-To get autocomplete inside VSCode, you can add the following to your .vscode/settings.json file:
-```json
-{
-  "Lua.workspace.library": [
-    "/path/to/server/txData/QBCore/resources/zero_utils"
-  ],
-}
-```
-
-## PrintUtils
-To use PrintUtils, you can use it like so:
-```lua
-PrintUtils = exports.zero_utils:GetPrintUtils(true or false) --pass in your bool for any debug
-Color = PrintUtils.GetColors() --just a table of colors you can use
-
-PrintUtils.PrintDebug("This is a test Debug") --will print a debug based off the bool you passed in earlier
-PrintUtils.Print("Color Change", Color.Green) --will change the color of text to Green
-```
-
-There are a lot of different ways to use this. You can open Shared/Utils/PrintUtils.lua to see everything available.
-
-
-
-
-
-
-
-

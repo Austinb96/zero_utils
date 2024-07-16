@@ -1,25 +1,33 @@
-name "zero-utils"
+name "zero_utils"
 author "ZeroShadow"
-version "v0.0.1alpha"
-description "Utils for Zero Scripts by ZeroShadow"
+version "1.0.0"
+description "Utils for zero stuff"
 fx_version "cerulean"
 game "gta5"
 lua54 'yes'
 
-shared_scripts {
-	'PrintUtils.lua',
-	'Shared/init.lua',
-	'Shared/Utils/*.lua',
-	'Shared/Compatability/*.lua'
+client_scripts {
+    'client/*.lua',
+    'client/callbacks/*.lua',
+    'client/imports/*.lua',
 }
 
 server_scripts {
-    'Server/*.lua' ,
-    'Server/Compatability/*.lua' ,
+    'server/*.lua',
+    'server/callbacks/*.lua',
+    'server/imports/*.lua',
 }
-client_scripts {
-	'Client/Utils/*.lua',
-	'Client/*.lua',
-	'Client/Compatability/*.lua',
+shared_scripts {
+    '@ox_lib/init.lua',
+    'init.lua',
+    'config.lua',
+    'shared/*.lua',
+    'shared/imports/*.lua',
 }
 
+files {
+    'client/bridge/**.lua',
+    'server/bridge/**.lua',
+}
+
+dependency '/assetpacks'
