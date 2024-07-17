@@ -2,9 +2,9 @@ if not AssertBridgeResource(Config.Bridge.Callback, "ox", "ox_lib") then return 
 printdb("Loading Callback")
 local callback = {}
 
-callback.trigger = function(name, delay, cb, ...)
+callback.trigger = function(name, src, cb, ...)
     printdb("Triggering Callback %s", name)
-    lib.callback(name, delay, cb, ...)
+    lib.callback(name, src, cb, ...)
 end
 
 callback.await = function(name, src, ...)
