@@ -1,33 +1,30 @@
 name "zero_utils"
-author "ZeroShadow"
+author "Zero"
 version "1.0.0"
-description "Utils for zero stuff"
+description "Utility/Bridge for fivem scripts"
 fx_version "cerulean"
 game "gta5"
 lua54 'yes'
+use_experimental_fxv2_oal 'yes'
 
 client_scripts {
-    'client/*.lua',
-    'client/callbacks/*.lua',
-    'client/imports/*.lua',
+    "init.lua",
+    "client/*.lua",
 }
 
 server_scripts {
-    'server/*.lua',
-    'server/callbacks/*.lua',
-    'server/imports/*.lua',
-}
-shared_scripts {
-    '@ox_lib/init.lua',
-    'init.lua',
-    'config.lua',
-    'shared/*.lua',
-    'shared/imports/*.lua',
+    '@oxmysql/lib/MySQL.lua',
+    "init.lua",
+    "server/*.lua",
 }
 
 files {
-    'client/bridge/**.lua',
-    'server/bridge/**.lua',
+    "init.lua",
+    'modules/**/client.lua',
+    'modules/**/shared.lua',
+    'bridge/**/**/client.lua',
+    -- 'bridge/**/**/shared.lua',
+    'shared/*.lua'
 }
 
 dependency '/assetpacks'
