@@ -17,6 +17,14 @@ function inventory.getItemInfo(item)
     }
 end
 
+function inventory.getPlayerInventory()
+    local PlayerInv = ox_inventory:GetPlayerItems()
+    if not PlayerInv then
+        return {}
+    end
+    return PlayerInv
+end
+
 function inventory.hasItem(item, count, metadata)
     local result = ox_inventory:Search("count", item, metadata)
     if result >= (count or 1) then
@@ -32,6 +40,10 @@ end
 
 function inventory.setBusy(busy)
     LocalPlayer.state.invBusy = busy
+end
+
+function inventory.Image(item)
+    return 'https://cfx-nui-ox_inventory/web/images/'..item..'.png'
 end
 
 return inventory

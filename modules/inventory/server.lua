@@ -21,6 +21,10 @@ function zutils.inventory.doesItemExist(item)
     return true
 end
 
+function zutils.inventory.getAvailableWeight(inv)
+    return inventory.getAvailableWeight(inv)
+end
+
 function zutils.inventory.addItem(inv, item, count, metadata, slot, cb)
     assert(item, "Item must be specified")
     count = count or 1

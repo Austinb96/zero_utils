@@ -40,6 +40,13 @@ function inventory.hasItem(inv, item, count, metadata)
     if result >= (count or 1) then return true end
     return false, "You do not have enough: " .. item
 end
+function inventory.getPlayerInventory(src)
+    local PlayerInv = ox_inventory:GetInventoryItems(src)
+    if not PlayerInv then
+        return {}
+    end
+    return PlayerInv
+end
 
 function inventory.registerStash(id, label, slots, max_weight, owner, groups, coords)
     return ox_inventory:RegisterStash(id, label, slots, max_weight, owner, groups, coords)
@@ -58,5 +65,15 @@ function inventory.getAvailableSlots(inv, owner)
     local check_inv = ox_inventory:GetInventory(inv, owner)
     return check_inv and (check_inv.slots - #check_inv.items) or 0
 end
+
+function inventory.registerShop(id, coords, label, items, society)
+    return ox_inventory:RegisterShop(id, {
+        name = label,
+        inventory = items,
+        locations = coords or nil,
+        groups = society or nil,
+    })
+end
+
 
 return inventory

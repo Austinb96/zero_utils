@@ -3,6 +3,10 @@ local qb_inventory = exports['qb-inventory']
 local inventory = {}
 local stashes = {}
 
+function inventory.createUseableItem(item, func)
+    return QBCore.Functions.CreateUseableItem(item, func)
+end
+
 function inventory.getItemInfo(item)
     local qb_item = QBCore.Shared.Items[item]
     if not qb_item then
@@ -44,8 +48,8 @@ RegisterNetEvent('zero_utils:server:qb-inventory:OpenInventory', function(inv_ty
         if type(stash.groups) == "string" then
             stash.groups = { stash.groups }
         end
-        
-        if not (table.contains(stash.groups, player_job) or table.contains(stash.groups, player_gang) )then
+
+        if not (table.contains(stash.groups, player_job) or table.contains(stash.groups, player_gang)) then
             return
         end
 
@@ -63,5 +67,112 @@ RegisterNetEvent('zero_utils:server:qb-inventory:OpenInventory', function(inv_ty
         })
     end
 end)
+
+function inventory.getPlayerInventory(inv)
+    local inven = qb_inventory:GetInventory(inv)
+    if not inven then return false end
+
+    return inven.items
+end
+
+function inventory.getAvailableWeight(inv)
+    if tonumber(inv) then
+        return qb_inventory:GetFreeWeight(inv)
+    end
+
+    local check_inv = qb_inventory:GetInventory(inv)
+    if check_inv then
+        return check_inv.maxWeight - qb_inventory:GetTotalWeight(inv)
+    else
+        return 0
+    end
+end
+
+function inventory.getAvailableSlots(inv)
+    local _, abailable_slots = qb_inventory:GetSlots(inv)
+    return abailable_slots
+end
+
+function inventory.canCarryItem(src, item, count, metadata)
+    if metadata then
+        printwarn("Metadata search is not supported in qb-inventory bridge at this time")
+    end
+    local available_weight = inventory.getAvailableWeight(src)
+    local item_info = inventory.getItemInfo(item)
+
+    if not item_info then
+        return false, "Item does not exist: " .. item
+    end
+
+    local total_weight_needed = item_info.weight * (count or 1)
+    if available_weight < total_weight_needed then
+        return false, "Inventory Cannot carry: " .. item
+    end
+
+    return true
+end
+
+function inventory.addItem(inv, item, count, metadata, slot, cb)
+    if cb then printwarn("Callback is not supported in qb-inventory bridge") end
+
+    local result = qb_inventory:AddItem(inv, item, count, slot, metadata or false, zutils.name .. " add item")
+
+    if not result then
+        return false, "Inventory AddItem failed: " .. item
+    end
+
+    if tonumber(inv) then
+        TriggerClientEvent('qb-inventory:client:ItemBox', inv, QBCore.Shared.Items[item], "add", count)
+        Wait(100)
+    end
+
+    return result
+end
+
+function inventory.removeItem(inv, item, count, metadata, slot)
+    if metadata then
+        printwarn("Metadata search is not supported in qb-inventory bridge at this time")
+    end
+    local result = qb_inventory:RemoveItem(inv, item, count, slot, zutils.name .. " remove item")
+
+    if not result then
+        return false, "Inventory RemoveItem failed: " .. tostring(item)
+    end
+
+    if tonumber(inv) then
+        TriggerClientEvent('qb-inventory:client:ItemBox', inv, QBCore.Shared.Items[item], "remove", count)
+    end
+
+    return true
+end
+
+function inventory.hasItem(inv, item, count, metadata)
+    if metadata then
+        printwarn("Metadata search is not supported in qb-inventory bridge at this time")
+    end
+    if tonumber(inv) then
+        local result = qb_inventory:HasItem(inv, item, count)
+        if result then
+            return true
+        end
+        return false, "You do not have enough: " .. item
+    end
+    local inven = inventory.getInv(inv)
+    if not inven then
+        return false, "You do not have enough: " .. item
+    end
+
+    local total_found = 0
+    for _, v in pairs(inven) do
+        if v.name == item then
+            total_found = total_found + v.amount
+        end
+        if total_found >= count then
+            return true
+        end
+    end
+
+    return false, "You do not have enough: " .. item
+end
 
 return inventory
