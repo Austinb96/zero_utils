@@ -88,25 +88,38 @@ end
 
 target.addModelTarget = function(model, options)
     exports.ox_target:addModel(model, formatOptions(options))
+    return {
+        remove = function()
+            target.removeModel(model, options)
+        end
+    }
 end
 
-
-
-target.removeNetIDTarget = function(netId, options)
-    exports.ox_target:removeEntity(netId, options)
+target.addGlobalPed = function(name, options)
+    exports.ox_target:addGlobalPed(formatOptions(options))
+    return {
+        remove = function()
+            target.removeGlobalPed(name)
+        end
+    }
 end
 
-target.removeEntityTarget = function(entities, options)
-    exports.ox_target:removeLocalEntity(entities, options)
+target.addGlobalObject = function(name, options)
+    exports.ox_target:addGlobalObject(formatOptions(options))
+    return {
+        remove = function()
+            target.removeGlobalObject(name)
+        end
+    }
 end
 
-
-target.removeModelTarget = function(model, options)
-    exports.ox_target:removeModel(model, options)
-end
-
-target.removeZoneTarget = function(id)
-    exports.ox_target:removeZone(id)
+target.addGlobalVehicle = function(name, options)
+    exports.ox_target:addGlobalVehicle(formatOptions(options))
+    return {
+        remove = function()
+            target.removeGlobalVehicle(name)
+        end
+    }
 end
 
 return target

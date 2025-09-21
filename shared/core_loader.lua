@@ -14,6 +14,24 @@ local core_definitions = {
             return Core
         end
     },
+    qbx_core = {
+        resource = "qbx-core",
+        loader = function()
+            if not next(Core) then
+                Core = exports['qbx-core']:GetCoreObject()
+            end
+            return Core
+        end
+    },
+    ESX = {
+        resource = "es_extended",
+        loader = function()
+            if not next(Core) then
+                Core = exports.es_extended:getSharedObject()
+            end
+            return Core
+        end
+    },
     ox_lib = {
         resource = "ox_lib",
         ignore_source = '@@ox_lib/init.lua',
