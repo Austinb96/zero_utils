@@ -26,10 +26,22 @@ local default_bridges = {
     },
     target = {
         "ox_target",
+        "qb-target"
     },
     menu = {
         "ox_lib",
     },
+    shop = {
+        "ox_inventory",
+        "qb-inventory",
+    },
+    keys = {
+        "dusa_vehiclekeys"
+    },
+    fuel = {
+        "ox_fuel",
+        "cc-fuel"
+    }
 }
 
 local bridge_aliases  = {

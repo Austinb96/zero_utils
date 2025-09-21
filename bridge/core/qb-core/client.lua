@@ -16,10 +16,24 @@ function core.getJob()
     return job
 end
 
+function core.getGang()
+    local player_data, err = core.getPlayerData()
+    if not player_data then return false, err end
+    local gang = player_data.gang
+    if not gang then return false, "Gang not found" end
+    return gang
+end
+
 function core.getJobData(jobName)
     local job_data = QBCore.Shared.Jobs[jobName]
     if not job_data then return false, "Job not found" end
     return job_data
+end
+
+function core.getVehicleProperties(vehicle)
+    local properties = QBCore.Functions.GetVehicleProperties(vehicle)
+    if not properties then return false, "Failed to get vehicle properties" end
+    return properties
 end
 
 return core

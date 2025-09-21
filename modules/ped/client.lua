@@ -163,9 +163,17 @@ function zutils.ped.createPed(model, coords, options, pedId)
     return ped, id
 end
 
+local function getPedByEntity(ped)
+    for id, data in pairs(peds) do
+        if data.ped == ped then
+            return data
+        end
+    end
+    return nil
+end
+
 function zutils.ped.RemovePed(pedid)
-    print("Removing ped with id", pedid)
-    local ped = peds[pedid]
+    local ped = peds[pedid] or getPedByEntity(pedid)
     if not ped then
         printerr("Ped not found for id %s", pedid)
         return

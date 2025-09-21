@@ -2,9 +2,14 @@ local inventory = zutils.bridge_loader("inventory", "server")
 if not inventory then return end
 
 zutils.inventory = {}
+local personal_stashes = {}
 
 function zutils.inventory.getItemInfo(item)
     return inventory.getItemInfo(item)
+end
+
+function zutils.inventory.findItem(inv, item, metadata)
+    return inventory.findItem(inv, item, metadata)
 end
 
 function zutils.inventory.doesItemExist(item)
@@ -67,11 +72,26 @@ end
 
 zutils.inventory.HasItem = zutils.inventory.hasItem -- Alias for compatibility
 
-function zutils.inventory.registerStash(id, label, slots, max_weight, owner, groups, coords)
+function zutils.inventory.registerStash(id, label, slots, max_weight, owner, groups, coords, is_personal)
     assert(id, "ID must be specified")
     assert(label, "Label must be specified")
+    coords = coords and coords.xyz or nil
+
+    if is_personal then
+        printdb("Registering personal stash: %s", id)
+        personal_stashes[id] = {
+            label = label,
+            slots = slots or 50,
+            max_weight = max_weight or 1000000,
+            owner = owner or nil,
+            groups = groups or nil,
+            coords = coords or nil
+        }
+        return
+    end
     slots = slots or 50
     max_weight = max_weight or 1000000
+    printdb("Registering stash: %s with label: %s, slots: %s, max_weight: %s, owner: %s, groups: %s, coords: %s", id, label, slots, max_weight, owner, groups, coords and json.encode(coords) or "nil")
     inventory.registerStash(id, label, slots, max_weight, owner, groups, coords)
 end
 
@@ -95,7 +115,7 @@ function zutils.inventory.craftItem(src, items, ingredients)
             { ingredients, 1 }
         }
     end
-
+    
     for _, item in ipairs(items) do
         if not zutils.inventory.doesItemExist(item[1]) then
             return false, "Item does not exist: " .. item[1]
@@ -153,5 +173,31 @@ function zutils.inventory.craftItem(src, items, ingredients)
 
     return true
 end
+
+zutils.callback.register("zutils:inventory:registerPersonalStash:"..zutils.name, function(source, id)
+    local allowed_stash = personal_stashes[id]
+    if not allowed_stash then
+        printwarn("(src:%s, name:%s) tried to register a personal stash that does not exist: %s", source, GetPlayerName(source), id)
+        zutils.logger(source, "exploit", "Tried to register a personal stash that does not exist: " .. id)
+        return false
+    end
+
+    if allowed_stash.coords then
+        local coords = allowed_stash.coords
+        local player_coords = GetEntityCoords(GetPlayerPed(source))
+        if #(coords - player_coords) > 5.0 then
+            printwarn("(src:%s, name:%s) tried to register a personal stash at an invalid location: %s", source,
+                GetPlayerName(source), id)
+            zutils.logger(source, "exploit", "Tried to register a personal stash at an invalid location: " .. id)
+            return false
+        end
+    end
+
+    local playerId = zutils.player.getPlayerId(source)
+    local new_id = id .. playerId
+    zutils.inventory.registerStash(new_id, personal_stashes[id].label, personal_stashes[id].slots,
+        personal_stashes[id].max_weight, playerId, personal_stashes[id].groups, personal_stashes[id].coords)
+    return true
+end)
 
 return zutils.inventory

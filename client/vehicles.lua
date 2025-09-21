@@ -1,3 +1,6 @@
+local fuel = zutils.bridge_loader("fuel", "client")
+if not fuel then printerr("Failed to load fuel bridge") return end
+
 local MISMATCHED_VEHICLE_TYPES = {
     [`airtug`] = "automobile",       -- trailer
     [`avisa`] = "submarine",         -- boat
@@ -43,6 +46,47 @@ local VEHICLE_TYPES = {
     [21] = "train",
 }
 
+AddStateBagChangeHandler('veh_properties', '', function(bagName, _, value)
+    if not value or not value.plate then return end
+    local vehicle = zutils.await(function()
+        local vehicle = GetEntityFromStateBagName(bagName)
+        if DoesEntityExist(vehicle) then
+            return vehicle
+        end
+    end, nil, 10000, true)
+    if not vehicle then return end
+
+    --TODO support other properties later.
+    lib.setVehicleProperties(vehicle, value)
+    Wait(200)
+    
+    
+    if NetworkGetEntityOwner(vehicle) == PlayerId() then
+        lib.setVehicleProperties(vehicle, value)
+        Entity(vehicle).state:set('veh_properties', nil, true)
+        printdb(true, "Setting properties for vehicle %s", vehicle)
+    end
+end)
+
+AddStateBagChangeHandler('zutils:fuel', '', function(bagName, _, value)
+    if not value then return end
+    printdb(true, "Fuel state bag changed: %s %s", bagName, value)
+    local vehicle = zutils.await(function()
+        local vehicle = GetEntityFromStateBagName(bagName)
+        if DoesEntityExist(vehicle) then
+            return vehicle
+        end
+    end, nil, 10000, true)
+    if not vehicle then return end
+    
+    if NetworkGetEntityOwner(vehicle) == PlayerId() then
+        Entity(vehicle).state:set('zutils:fuel', nil, true)
+        SetVehicleFuelLevel(vehicle, value)
+        fuel.setFuel(vehicle, value)
+        printdb(true, "Setting fuel for vehicle %s to %s", vehicle, value)
+    end
+end)
+
 function zutils.GetVehicleType(model)
     model = zutils.joaat(model)
     if not IsModelInCdimage(model) then
@@ -56,6 +100,5 @@ function zutils.GetVehicleType(model)
     local vehicleType = GetVehicleClassFromName(model)
     return VEHICLE_TYPES[vehicleType] or "automobile"
 end
-
 
 zutils.callback.register("zero_utils:client:GetVehicleType", zutils.GetVehicleType)

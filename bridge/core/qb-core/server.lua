@@ -22,10 +22,30 @@ function core.getJob(src)
     return job
 end
 
+function core.getGang(src)
+    local player_data, err = core.getPlayerData(src)
+    if not player_data then return false, err end
+    local gang = player_data.gang
+    if not gang then return false, "Gang not found" end
+    return gang
+end
+
 function core.getJobData(jobName)
     local job_data = QBCore.Shared.Jobs[jobName]
     if not job_data then return false, "Job not found" end
     return job_data
+end
+
+function core.removeMoney(src, amount, method, reason)
+    local player, err = core.getPlayer(src)
+    if not player then return false, err end
+    return player.Functions.RemoveMoney(method, amount, reason)
+end
+
+function core.addMoney(src, amount, method, reason)
+    local player, err = core.getPlayer(src)
+    if not player then return false, err end
+    return player.Functions.AddMoney(method, amount, reason)
 end
 
 return core

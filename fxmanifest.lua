@@ -18,13 +18,19 @@ server_scripts {
     "server/*.lua",
 }
 
+ui_page 'ui/build/index.html'
+
 files {
     "init.lua",
     'modules/**/client.lua',
     'modules/**/shared.lua',
     'bridge/**/**/client.lua',
     -- 'bridge/**/**/shared.lua',
-    'shared/*.lua'
+    'shared/*.lua',
+    'ui/build/index.html',
+    'ui/build/**/*',
+    'ui/assets/**/*'
 }
+
 
 dependency '/assetpacks'

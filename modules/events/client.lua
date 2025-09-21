@@ -26,26 +26,32 @@ zutils.events.onPlayerUnload = function(cb)
 end
 
 function zutils.events.onVehicleEntered(cb)
-    RegisterNetEvent('baseevents:enteredVehicle', function(veh,seat,modelName)
-        cb(veh, seat, modelName)
-    end)
-end
-
-function zutils.events.onEnteringVehicle(cb)
-    RegisterNetEvent('baseevents:enteringVehicle', function(veh,seat,modelName)
-        cb(veh, seat, modelName)
+    if zutils.cache.vehicle and zutils.cache.vehicle ~= 0 then
+        local model = GetEntityModel(zutils.cache.vehicle)
+        local vehicle_name = GetDisplayNameFromVehicleModel(model)
+        local vehicle_type = zutils.vehicles.getVehicleTypeByModel(model)
+        cb(zutils.cache.vehicle, zutils.cache.seat, model, vehicle_name, vehicle_type)
+    end
+    zutils.cache.onSet('vehicle', function(vehicle)
+        if not vehicle or vehicle == 0 then
+            return
+        end
+        local model = GetEntityModel(vehicle)
+        local vehicle_name = GetDisplayNameFromVehicleModel(model)
+        local vehicle_type = zutils.vehicles.getVehicleTypeByModel(model)
+        cb(vehicle, zutils.cache.seat, model, vehicle_name, vehicle_type)
     end)
 end
 
 function zutils.events.onLeftVehicle(cb)
-    RegisterNetEvent('baseevents:leftVehicle', function(veh,seat,modelName)
-        cb(veh, seat, modelName)
-    end)
-end
-
-function zutils.events.onVehicleEnterAborted(cb)
-    RegisterNetEvent('baseevents:enteringAborted', function()
-        cb()
+    zutils.cache.onSet('vehicle', function(vehicle, oldVeh)
+        if not oldVeh or oldVeh == 0 then
+            return
+        end
+        local model = GetEntityModel(oldVeh)
+        local vehicle_name = GetDisplayNameFromVehicleModel(model)
+        local vehicle_type = zutils.vehicles.getVehicleTypeByModel(model)
+        cb(oldVeh, zutils.cache.seat, model, vehicle_name, vehicle_type)
     end)
 end
 

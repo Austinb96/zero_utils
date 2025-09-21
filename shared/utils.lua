@@ -1,3 +1,28 @@
+local function contains(t, search)
+    
+    if type(search) == "table" then
+        for _, v in ipairs(search) do
+            if not contains(t, v) then
+                return false
+            end
+        end
+        return true
+    end
+    
+    if t[search] then
+        return true
+    end
+
+    for _, v in ipairs(t) do
+        if v == search then
+            return true
+        end
+    end
+    return false
+end
+
+table.contains = contains
+
 function zutils.isResourceStarted(resource)
     local started = GetResourceState(resource):find("start")
     if not started then
@@ -67,8 +92,8 @@ function zutils.joaat(str)
     return joaat(str)
 end
 
+
 function zutils.uuid()
-    math.randomseed(GetGameTimer())
     local template = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
     return string.gsub(template, '[xy]', function(c)
         local v = (c == 'x') and math.random(0, 0xf) or math.random(8, 0xb)
@@ -76,18 +101,29 @@ function zutils.uuid()
     end)
 end
 
-function zutils.await(fn, errmsg, timeout)
+function zutils.await(fn, errmsg, timeout, noerr)
+    if not errmsg then errmsg = "Await timed out" end
+    local arg
+    if errmsg[1] then
+        errmsg = errmsg[1]
+        arg = errmsg[2]
+    end
     timeout = timeout or 10000
     local start = GetGameTimer()
-    while not fn() do
+    local result
+    while not result do
+        result = fn()
         if GetGameTimer() - start > timeout then
-            printerr(errmsg[1] or errmsg or "Await timed out", errmsg[2])
+            if not noerr then
+                printerr(errmsg, arg)
+            else
+                return false, errmsg:format(arg)
+            end
         end
         Wait(0)
     end
-    return true
+    return result
 end
-
 
 
 --TODO DEPRECATED COMPAT FUNCTIONS REMOVE LATER
@@ -377,24 +413,6 @@ function zutils.GetClosestPlayers(src, maxDistance)
     return players
 end
 
-function zutils.GetClosestVehicle(maxDist)
-	local ped = PlayerPedId()
-    local vehicles = GetGamePool('CVehicle')
-	local closestDistance = math.huge
-	local closestVehicle = nil
-	for i = 1, #vehicles do
-		local veh = vehicles[i]
-		local vehCoords = GetEntityCoords(veh)
-		local distance = #(GetEntityCoords(ped) - vehCoords)
-		if distance < closestDistance and distance < maxDist then
-			closestDistance = distance
-			closestVehicle = veh
-		end
-	end
-	
-	return closestVehicle
-end
-
 function zutils.GetPlate(veh)
     local plate = GetVehicleNumberPlateText(veh)
     plate = plate:gsub( '^%s*(.-)%s*$', '%1')
@@ -429,21 +447,6 @@ function zutils.GetJobInfo(job)
     local job = QBCore.Shared.Jobs[job]
     if not job then return false, "Job not found" end
     return job
-end
-
-function zutils.joaat(str)
-    if not str then return false, "nil found" end
-    if tonumber(str) then return str end
-    return joaat(str)
-end
-
-function zutils.uuid()
-    math.randomseed(GetGameTimer())
-    local template ='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
-    return string.gsub(template, '[xy]', function (c)
-        local v = (c == 'x') and math.random(0, 0xf) or math.random(8, 0xb)
-        return string.format('%x', v)
-    end)
 end
 
 function zutils.getPedForwardVector(ped)

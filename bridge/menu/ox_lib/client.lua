@@ -1,15 +1,12 @@
 local menu = {}
 
-function menu.registerContext(id, menuData)
+function menu.registerMenu(id, menuData)
     menuData.id = id
     menuData.title = menuData.title or "Menu"
     lib.registerContext(menuData)
 end
 
-function menu.openMenu(id, menuData)
-    if menuData then
-        menu.registerContext(id, menuData)
-    end
+function menu.openMenu(id)
     lib.showContext(id)
 end
 

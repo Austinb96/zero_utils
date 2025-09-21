@@ -7,11 +7,12 @@ function inventory.getItemInfo(item)
         return false, "Item does not exist: " .. item
     end
     return {
-        name = ox_item.name,
+        name = item,
         label = ox_item.label,
+        image = ox_item.client and ox_item.client.image or ox_item.name .. ".png",
         description = ox_item.description,
         weight = ox_item.weight,
-        stackable = ox_item.stackable,
+        stackable = ox_item.stack,
         metadata = ox_item.metadata or {},
     }
 end
@@ -27,6 +28,10 @@ end
 
 function inventory.openInventory(inv_type, id)
     ox_inventory:openInventory(inv_type, id)
+end
+
+function inventory.setBusy(busy)
+    LocalPlayer.state.invBusy = busy
 end
 
 return inventory
