@@ -26,6 +26,13 @@ function zutils.player.getGang(src)
     return player.getGang(src)
 end
 
+function zutils.player.getJobData(src, jobName)
+    return player.getJobData(src, jobName)
+end
+function zutils.player.getGender(src)
+    return player.getGender(src)
+end
+
 function zutils.player.getMoney(moneyType, src)
     local player_data = player.getPlayerData(src)
     if not player_data then
@@ -52,5 +59,12 @@ function zutils.player.addMoney(src, amount, payment_method, reason)
     return player.addMoney(src, amount, payment_method or "cash", reason)
 end
 
+function zutils.player.setHunger(src, hunger)
+    return player.setHunger(src, hunger)
+end
+
+function zutils.player.setThirst(src, thirst)
+    return player.setThirst(src, thirst)
+end
 
 return zutils.player
