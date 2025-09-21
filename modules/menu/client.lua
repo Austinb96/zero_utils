@@ -24,4 +24,8 @@ zutils.menu.inputDialog = function(header, inputs)
     return menu.inputDialog(header, inputs)
 end
 
+zutils.menu.closeMenu = function()
+    menu.closeMenu()
+end
+
 return zutils.menu
