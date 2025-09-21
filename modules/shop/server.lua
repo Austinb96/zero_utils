@@ -4,8 +4,7 @@ if not shop then return end
 zutils.shop = {}
 
 function zutils.shop.registerShop(id, shopData)
-    printdb(true, "Registering shop with ID: %s", id)
-    printtable(shopData)
+    printdb("Registering shop with ID: %s", id)
     shop.registerShop(id, shopData)
 end
 
