@@ -15,4 +15,8 @@ function menu.inputDialog(header, inputs)
     return result
 end
 
+function menu.closeMenu()
+    lib.hideContext()
+end
+
 return menu
