@@ -1,3 +1,4 @@
+zutils.core_loader("ox_lib")
 local function notify(notify_type, message, options)
     options = options or {}
     lib.notify({

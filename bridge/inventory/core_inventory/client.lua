@@ -9,7 +9,7 @@ function inventory.getPlayerInventory()
 end
 
 function inventory.hasItem(item, count, metadata)
-    local PlayerInv = inventory.getInv()
+    local PlayerInv = inventory.getPlayerInventory()
     local required = count or 1
     local found = 0
 

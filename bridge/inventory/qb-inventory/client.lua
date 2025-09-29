@@ -1,4 +1,3 @@
-local qb_inventory = exports['qb-inventory']
 local inventory = {}
 
 function inventory.hasItem(items, amount, metadata)
@@ -21,7 +20,6 @@ end
 function inventory.getItemImage(item)
     return 'https://cfx-nui-qb-inventory/html/images/'..item..'.png'
 end
-
 function inventory.getPlayerInventory()
     local PlayerInv = QBCore.Functions.GetPlayerData().items
     if not PlayerInv then
@@ -47,7 +45,7 @@ function inventory.getItemInfo(item)
 end
 
 function inventory.openInventory(inv_type, id)
-    TriggerServerEvent("zero_utils:server:qb-inventory:OpenInventory", inv_type, id)
+    TriggerServerEvent('zero_utils:server:qb-inventory:OpenInventory'..zutils.name, inv_type, id)
 end
 
 return inventory

@@ -90,5 +90,6 @@ zutils.require('/shared/utils.lua')
 zutils.require('/shared/core_loader.lua')
 
 zutils.initialized = true
+
 local _ = zutils.cache
 printdb("zero_utils initialized: %s", zutils.initialized)

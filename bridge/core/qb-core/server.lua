@@ -14,14 +14,6 @@ function core.getPlayerData(src)
     return player_data
 end
 
-function core.getJob(src)
-    local player_data, err = core.getPlayerData(src)
-    if not player_data then return false, err end
-    local job = player_data.job
-    if not job then return false, "Job not found" end
-    return job
-end
-
 function core.getGang(src)
     local player_data, err = core.getPlayerData(src)
     if not player_data then return false, err end
@@ -30,10 +22,34 @@ function core.getGang(src)
     return gang
 end
 
+function core.getJob(src)
+    local player_data, err = core.getPlayerData(src)
+    if not player_data then return false, err end
+    local job = player_data.job
+    if not job then return false, "Job not found" end
+    return job
+end
+
 function core.getJobData(jobName)
     local job_data = QBCore.Shared.Jobs[jobName]
     if not job_data then return false, "Job not found" end
     return job_data
+end
+
+function core.setThirst(src, thirst)
+    local player, err = core.getPlayer(src)
+    if not player then return false, err end
+    player.Functions.SetMetaData("thirst", player.PlayerData.metadata["thirst"] + thirst)
+    TriggerClientEvent("hud:client:UpdateNeeds", src, player.PlayerData.metadata.hunger, thirst)
+    return true
+end
+
+function core.setHunger(src, hunger)
+    local player, err = core.getPlayer(src)
+    if not player then return false, err end
+    player.Functions.SetMetaData("hunger", player.PlayerData.metadata["hunger"] + hunger)
+    TriggerClientEvent("hud:client:UpdateNeeds", src, hunger, player.PlayerData.metadata.thirst)
+    return true
 end
 
 function core.removeMoney(src, amount, method, reason)

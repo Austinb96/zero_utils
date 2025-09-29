@@ -2,6 +2,7 @@ local player = zutils.bridge_loader("core", "shared")
 if not player then return end
 
 zutils.player = {}
+
 function zutils.player.getPlayerId(src)
     local player_data = player.getPlayerData(src)
     if not player_data then
@@ -29,6 +30,11 @@ end
 function zutils.player.getJobData(src, jobName)
     return player.getJobData(src, jobName)
 end
+
+function zutils.player.getGroupInfo(src, isJob)
+    return player.getPlayerData(src)
+end
+
 function zutils.player.getGender(src)
     return player.getGender(src)
 end
@@ -39,6 +45,22 @@ function zutils.player.getMoney(moneyType, src)
         return 0
     end
     return player_data.money[moneyType] or 0
+end
+
+function zutils.player.setThirst(src, thirst)
+    return player.setThirst(src, thirst)
+end
+
+function zutils.player.setHunger(src, hunger)
+    return player.setHunger(src, hunger)
+end
+
+function zutils.player.getPedArmour(src)
+    return GetPedArmour(src or PlayerPedId())
+end
+
+function zutils.player.setArmour(armour, src)
+    return SetPedArmour(src or PlayerPedId(), GetPedArmour(PlayerPedId()) + armour)
 end
 
 function zutils.player.removeMoney(src, amount, payment_method, reason)
@@ -55,16 +77,12 @@ function zutils.player.addMoney(src, amount, payment_method, reason)
         printwarn("zutils.player.addMoney should not be called from the client!")
         return false
     end
-    
+
     return player.addMoney(src, amount, payment_method or "cash", reason)
 end
 
-function zutils.player.setHunger(src, hunger)
-    return player.setHunger(src, hunger)
-end
-
-function zutils.player.setThirst(src, thirst)
-    return player.setThirst(src, thirst)
+function zutils.player.toggleDuty(duty, src)
+    return player.toggleDuty(duty, src)
 end
 
 return zutils.player

@@ -9,7 +9,7 @@ function inventory.getPlayerInventory(src)
 end
 
 function inventory.hasItem(src, item, count, metadata)
-    local PlayerInv = inventory.getInv(src)
+    local PlayerInv = inventory.getPlayerInventory(src)
     local required = count or 1
     local found = 0
 
@@ -25,5 +25,10 @@ function inventory.hasItem(src, item, count, metadata)
         return false, ("You do not have enough: %s"):format(item)
     end
 end
+
+function inventory.createUseableItem(itemName, cb)
+    return printwarn("CreateUseableItem is not supported in core_inventory bridge at this moment")
+end
+
 
 return inventory

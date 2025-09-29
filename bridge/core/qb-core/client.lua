@@ -1,5 +1,3 @@
-if not QBCore then QBCore = zutils.core_loader("QBCore") end
-
 local core = {}
 
 function core.getPlayerData()
@@ -16,6 +14,28 @@ function core.getJob()
     return job
 end
 
+function core.getJobData(jobName)
+    local job_data = QBCore.Shared.Jobs[jobName]
+    if not job_data then return false, "Job not found" end
+    return job_data
+end
+
+function core.getGroupInfo(isJob)
+    local data = core.getPlayerData()
+    local group = isJob and data?.job or data?.gang
+    return {
+        name = group.name,
+        grade = group.grade.level,
+        label = group.label,
+        isBoss = group.grade.isboss or false,
+    }
+end
+
+function core.getGender()
+    local data = core.getPlayerData()
+    return (data.charinfo.gender or 0) + 1 -- 1 = Male, 2 = Female
+end
+
 function core.getGang()
     local player_data, err = core.getPlayerData()
     if not player_data then return false, err end
@@ -24,16 +44,29 @@ function core.getGang()
     return gang
 end
 
-function core.getJobData(jobName)
-    local job_data = QBCore.Shared.Jobs[jobName]
-    if not job_data then return false, "Job not found" end
-    return job_data
+function core.isDead()
+    local data = core.getPlayerData()
+    return data.metadata and data.metadata.isdead
 end
 
 function core.getVehicleProperties(vehicle)
     local properties = QBCore.Functions.GetVehicleProperties(vehicle)
     if not properties then return false, "Failed to get vehicle properties" end
     return properties
+end
+
+function core.toggleDuty(duty, src)
+    if not duty then
+        TriggerServerEvent("QBCore:ToggleDuty")
+    else
+        local player = core.getPlayerData(src)
+        if not player then return false, "Player Data not found" end
+        player.Functions.SetJobDuty(duty)
+    end
+end
+
+function core.onJobUpdate(cb)
+    RegisterNetEvent("QBCore:Client:OnJobUpdate", cb)
 end
 
 return core

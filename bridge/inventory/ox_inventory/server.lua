@@ -40,6 +40,7 @@ function inventory.hasItem(inv, item, count, metadata)
     if result >= (count or 1) then return true end
     return false, "You do not have enough: " .. item
 end
+
 function inventory.getPlayerInventory(src)
     local PlayerInv = ox_inventory:GetInventoryItems(src)
     if not PlayerInv then

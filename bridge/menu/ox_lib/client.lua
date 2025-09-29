@@ -1,3 +1,4 @@
+zutils.core_loader("ox_lib")
 local menu = {}
 
 function menu.registerMenu(id, menuData)
@@ -11,8 +12,7 @@ function menu.openMenu(id)
 end
 
 function menu.inputDialog(header, inputs)
-    local result = exports.ox_lib:inputDialog(header, inputs)
-    return result
+    return lib.inputDialog(header, inputs)
 end
 
 function menu.closeMenu()

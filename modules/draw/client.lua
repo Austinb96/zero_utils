@@ -34,7 +34,7 @@ function zutils.draw.text3D(coords, text, options)
     function drawing:stop()
         self.running = false
     end
-    
+
     function drawing:updateText(newText)
         text = newText
     end

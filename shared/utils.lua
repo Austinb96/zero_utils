@@ -1,30 +1,7 @@
-local function contains(t, search)
-    
-    if type(search) == "table" then
-        for _, v in ipairs(search) do
-            if not contains(t, v) then
-                return false
-            end
-        end
-        return true
-    end
-    
-    if t[search] then
-        return true
-    end
-
-    for _, v in ipairs(t) do
-        if v == search then
-            return true
-        end
-    end
-    return false
-end
-
-table.contains = contains
+zutils.require('/shared/table.lua')
 
 function zutils.isResourceStarted(resource)
-    local started = GetResourceState(resource):find("start")
+    local started = GetResourceState(resource):find("started")
     if not started then
         printdb("Resource [%s] is not started", resource)
         return false
@@ -92,7 +69,6 @@ function zutils.joaat(str)
     return joaat(str)
 end
 
-
 function zutils.uuid()
     local template = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
     return string.gsub(template, '[xy]', function(c)
@@ -124,6 +100,7 @@ function zutils.await(fn, errmsg, timeout, noerr)
     end
     return result
 end
+
 
 
 --TODO DEPRECATED COMPAT FUNCTIONS REMOVE LATER
@@ -267,7 +244,7 @@ function zutils.AwaitNetId(entity)
         end
         Wait(100)
     end
-    
+
     return netId
 end
 
@@ -429,7 +406,7 @@ function zutils.GetPlayerData(src)
     elseif src then
         printwarn("GetPlayerData called with src but not in server context")
     end
-    
+
     local player_data = QBCore.Functions.GetPlayerData()
     if not player_data then return false, "Player Data not found" end
     return player_data

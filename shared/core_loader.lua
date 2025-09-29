@@ -15,10 +15,10 @@ local core_definitions = {
         end
     },
     qbx_core = {
-        resource = "qbx-core",
+        resource = "qbx_core",
         loader = function()
             if not next(Core) then
-                Core = exports['qbx-core']:GetCoreObject()
+                Core = exports['qb-core']:GetCoreObject()
             end
             return Core
         end
@@ -42,13 +42,11 @@ local core_definitions = {
                 printerr("Failed to load ox_lib: Resource file not found")
                 return nil
             end
-
             local fn, err = load(chunk, '@ox_lib/init.lua')
             if not fn then
                 printerr("Failed to load ox_lib: %s", err)
                 return nil
             end
-
             fn()
             return lib
         end
@@ -86,7 +84,7 @@ function zutils.core_loader(core_name)
             return nil
         end
     end
-    
+
     local success, core = pcall(core_def.loader)
 
     loading_cores[core_name] = nil
@@ -107,7 +105,8 @@ end
 
 if not zutils.isResourceMissing("qb-core") then
     if not zutils.isResourceStarted("qb-core") then
-        printerr("QBCore is not started, please ensure that qb-core is ensure before this script is.")
+        printwarn("QBCore is not started, please ensure that qb-core is started before this script.")
+        return
     end
     if QBCore then return end
     QBCore = {}

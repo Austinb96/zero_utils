@@ -2,6 +2,7 @@ local inventory = zutils.bridge_loader("inventory", "server")
 if not inventory then return end
 
 zutils.inventory = {}
+
 local personal_stashes = {}
 
 function zutils.inventory.getItemInfo(item)
@@ -23,6 +24,10 @@ end
 
 function zutils.inventory.getAvailableWeight(inv)
     return inventory.getAvailableWeight(inv)
+end
+
+function zutils.inventory.createUseableItem(itemName, cb)
+    return inventory.createUseableItem(itemName, cb)
 end
 
 function zutils.inventory.addItem(inv, item, count, metadata, slot, cb)
@@ -51,19 +56,20 @@ function zutils.inventory.removeItem(inv, item, count, metadata, slot, cb)
     count = count or 1
 
     if not zutils.inventory.doesItemExist(item) then
-        return false, "Item does not exist: " .. item
+        return false, "Item does not exist: " .. tostring(item)
     end
 
     if not zutils.inventory.hasItem(inv, item, count, metadata) then
-        return false, "Inventory does not have item: " .. item
+        return false, "Inventory does not have item: " .. tostring(item)
     end
 
     local result = inventory.removeItem(inv, item, count, metadata, slot, cb)
     if not result then
-        return false, "Inventory RemoveItem failed: " .. item
+        return false, "Inventory RemoveItem failed: " .. tostring(item)
     end
     return true
 end
+
 zutils.inventory.RemoveItem = zutils.inventory.removeItem -- Alias for compatibility
 
 function zutils.inventory.canCarryItem(inv, item, count, metadata)
@@ -71,6 +77,7 @@ function zutils.inventory.canCarryItem(inv, item, count, metadata)
 end
 
 function zutils.inventory.hasItem(inv, item, count, metadata)
+    count = count or 1
     return inventory.hasItem(inv, item, count, metadata)
 end
 
@@ -82,7 +89,7 @@ function zutils.inventory.registerStash(id, label, slots, max_weight, owner, gro
     coords = coords and coords.xyz or nil
 
     if is_personal then
-        printdb("Registering personal stash: %s", id)
+        printdb( "Registering personal stash: %s", id)
         personal_stashes[id] = {
             label = label,
             slots = slots or 50,
@@ -95,8 +102,8 @@ function zutils.inventory.registerStash(id, label, slots, max_weight, owner, gro
     end
     slots = slots or 50
     max_weight = max_weight or 1000000
-    printdb("Registering stash: %s with label: %s, slots: %s, max_weight: %s, owner: %s, groups: %s, coords: %s", id, label, slots, max_weight, owner, groups, coords and json.encode(coords) or "nil")
     inventory.registerStash(id, label, slots, max_weight, owner, groups, coords)
+    printdb( "Registered stash: %s with label: %s, slots: %s, max_weight: %s, owner: %s", id, label, slots, max_weight, owner)
 end
 
 zutils.inventory.RegisterStash = zutils.inventory.registerStash -- Alias for compatibility
@@ -107,52 +114,80 @@ function zutils.inventory.forceOpenInventory(source, inv, id)
     return inventory.forceOpenInventory(source, inv, id)
 end
 
-function zutils.inventory.craftItem(src, items, ingredients)
-    if type(items) ~= "table" then
-        items = {
-            { items, 1 }
-        }
+function zutils.inventory.craftItem(src, items, ingredients, options)
+    options = options or {}
+    local amount = options.amount or 1
+    if type(items) == "string" then
+        items = { { items, 1 } }
+    elseif items[1] and type(items[1]) == "string" then
+        items = { items }
     end
     
-    if type(ingredients) ~= "table" then
-        ingredients = {
-            { ingredients, 1 }
-        }
+    if type(items) == "table" and not items[1] then
+        local temp = {}
+        for k, v in pairs(items) do
+            temp[#temp + 1] = { k, v }
+        end
+        items = temp
     end
     
+    if type(ingredients) == "string" then
+        ingredients = {{ingredients, 1}}
+    elseif ingredients[1] and type(ingredients[1] == "string") then
+        ingredients = { ingredients }
+    end
+
+    if type(ingredients) == "table" and not ingredients[1] then
+        local temp = {}
+        for k, v in pairs(ingredients) do
+            temp[#temp + 1] = { k, v }
+        end
+        ingredients = temp
+    end
+
+    printdb( "CRAFTING: Received items table: %s", json.encode(items))
+    printdb( "CRAFTING: Received ingredients table: %s", json.encode(ingredients))
+
     for _, item in ipairs(items) do
         if not zutils.inventory.doesItemExist(item[1]) then
+            zutils.logger(src, "exploit", (" tried to craft with an item that does not exist: %s"):format(item))
+            printwarn(zutils.logger.getFormatedPlayer(src) .. " tried to craft with an item that does not exist: %s", item)
             return false, "Item does not exist: " .. item[1]
         end
     end
     for _, ingredient in ipairs(ingredients) do
         if not zutils.inventory.doesItemExist(ingredient[1]) then
+            zutils.logger(src, "exploit", (" tried to craft with an item that does not exist: %s"):format(ingredient))
+            printwarn(zutils.logger.getFormatedPlayer(src) .. " tried to craft with an item that does not exist: %s", ingredient)
             return false, "Ingredient does not exist: " .. ingredient[1]
         end
-    end
-    local total_weight_needed = 0
-    local total_slots_needed = 0
-    for _, item in ipairs(items) do
-        local item_info = zutils.inventory.getItemInfo(item[1])
-        if not item_info then
-            printwarn("Item does not exist: " .. item[1])
-            return false, "Item does not exist: " .. item[1]
-        end
-        total_weight_needed = total_weight_needed + (item_info.weight * item[2])
-        total_slots_needed = total_slots_needed + 1
     end
 
+    local total_weight_needed, total_slots_needed = 0, 0
+    for _, item in ipairs(items) do
+        local info = zutils.inventory.getItemInfo(item[1])
+        if not info then
+            printwarn("Item does not exist: %s", item[1])
+            return false, "Item does not exist: " .. item[1]
+        end
+        total_weight_needed += (info.weight * item[2]) * amount
+        total_slots_needed += 1 * amount
+    end
     for _, ingredient in ipairs(ingredients) do
-        local ingredient_info = zutils.inventory.getItemInfo(ingredient[1])
-        if not ingredient_info then
+        local info = zutils.inventory.getItemInfo(ingredient[1])
+        if not info then
+            printwarn("Ingredient does not exist: %s", ingredient[1])
             return false, "Ingredient does not exist: " .. ingredient[1]
         end
-        total_weight_needed = total_weight_needed - (ingredient_info.weight * ingredient[2])
-        total_slots_needed = total_slots_needed - 1
+        total_weight_needed -= (info.weight * ingredient[2]) * amount
+        total_slots_needed -= 1 * amount
     end
 
     local available_weight = inventory.getAvailableWeight(src)
     local available_slots = inventory.getAvailableSlots(src)
+
+    printdb( "CRAFTING: Available weight: %s / Required: %s", available_weight, total_weight_needed)
+    printdb( "CRAFTING: Available slots: %s / Required: %s", available_slots, total_slots_needed)
 
     if available_weight < total_weight_needed then
         return false, "Not enough weight capacity to craft items"
@@ -161,17 +196,23 @@ function zutils.inventory.craftItem(src, items, ingredients)
         return false, "Not enough slots to craft items"
     end
 
-    for _, ingredient in ipairs(ingredients) do
-        local success, err = zutils.inventory.removeItem(src, ingredient[1], ingredient[2])
-        if not success then
-            return false, err
+    
+    --TODO add options for animations and wait times between crafting items
+    for i = 1, amount do
+        for _, ing in ipairs(ingredients) do
+            printdb( "CRAFTING: Removing ingredient %s x %s", ing[1], ing[2])
+            local success, err = zutils.inventory.removeItem(src, ing[1], ing[2])
+            print(success, err)
+            if not success then return false, err or "Failed to remove ingredients" end
         end
+    
     end
 
-    for _, item in ipairs(items) do
-        local success, err = zutils.inventory.addItem(src, item[1], item[2])
-        if not success then
-            return false, err
+    for i = 1, amount do
+        for _, it in ipairs(items) do
+            printdb( "CRAFTING: Adding item %s x %s", it[1], it[2])
+            local success, err = zutils.inventory.addItem(src, it[1], it[2])
+            if not success then return false, err or "Failed to add crafted item" end
         end
     end
 

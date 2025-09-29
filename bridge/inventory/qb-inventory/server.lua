@@ -1,5 +1,4 @@
 local qb_inventory = exports['qb-inventory']
-
 local inventory = {}
 local stashes = {}
 
@@ -34,7 +33,7 @@ function inventory.registerStash(id, label, slots, max_weight, owner, groups, co
     }
 end
 
-RegisterNetEvent('zero_utils:server:qb-inventory:OpenInventory', function(inv_type, id)
+RegisterNetEvent('zero_utils:server:qb-inventory:OpenInventory'..zutils.name, function(inv_type, id)
     local src = source
     if inv_type == 'stash' and stashes[id] then
         local stash = stashes[id]
