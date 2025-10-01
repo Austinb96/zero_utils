@@ -70,7 +70,6 @@ function zutils.joaat(str)
     return joaat(str)
 end
 
-
 function zutils.uuid()
     local template = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'
     return string.gsub(template, '[xy]', function(c)
@@ -102,6 +101,8 @@ function zutils.await(fn, errmsg, timeout, noerr)
     end
     return result
 end
+
+
 
 
 --TODO DEPRECATED COMPAT FUNCTIONS REMOVE LATER
@@ -181,10 +182,6 @@ local function GetForwardVectorFromRot(rot)
     return vector3(-math.sin(z) * num, math.cos(z) * num, math.sin(x))
 end
 
-function clamp(min, value, max)
-    return math.max(min, math.min(value, max))
-end
-
 function RayCastFromPlayCam(distance, ignoreObj, rayIgnoreWorld, raycastWater)
     local camCoords = GetGameplayCamCoord()
     local camRot = GetGameplayCamRot(0)
@@ -245,7 +242,7 @@ function zutils.AwaitNetId(entity)
         end
         Wait(100)
     end
-    
+
     return netId
 end
 
@@ -340,10 +337,6 @@ local function GetForwardVectorFromRot(rot)
     return vector3(-math.sin(z) * num, math.cos(z) * num, math.sin(x))
 end
 
-function clamp(min, value, max)
-    return math.max(min, math.min(value, max))
-end
-
 function RayCastFromPlayCam(distance, ignoreObj, rayIgnoreWorld, raycastWater)
     local camCoords = GetGameplayCamCoord()
     local camRot = GetGameplayCamRot(0)
@@ -407,7 +400,7 @@ function zutils.GetPlayerData(src)
     elseif src then
         printwarn("GetPlayerData called with src but not in server context")
     end
-    
+
     local player_data = QBCore.Functions.GetPlayerData()
     if not player_data then return false, "Player Data not found" end
     return player_data

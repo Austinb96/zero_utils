@@ -24,25 +24,25 @@ function zutils.prop.createProp(model, coords, options, propID)
     if props[id] then
         return false, nil, "Prop id already exists: " .. id
     end
-    
+
     printdb("Creating prop %s at %s", model, coords)
-    
+
     local prop = CreateObject(model, coords.x, coords.y, coords.z, true, true, false)
     SetEntityHeading(prop, coords.w or 0.0)
     local exists = zutils.await(function()
         Wait(100)
         return DoesEntityExist(prop)
     end, "", 5000, true)
-    
+
     if not exists then
         return false, nil, "Failed to create prop: " .. id
     end
-    
+
     if options.velocity then
         printdb("Setting velocity for prop %s to %s", id, options.velocity)
         SetEntityVelocity(prop, options.velocity.x, options.velocity.y, options.velocity.z)
     end
-    
+
     if options.state then
         for key, value in pairs(options.state) do
             Entity(prop).state:set(key, value, true)
@@ -50,7 +50,7 @@ function zutils.prop.createProp(model, coords, options, propID)
     end
 
     FreezeEntityPosition(prop, options.freeze and true or false)
-    
+
     SetEntityOrphanMode(prop, 2)
 
     props[id] = {

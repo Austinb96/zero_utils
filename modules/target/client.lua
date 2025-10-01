@@ -1,4 +1,4 @@
-local target = zutils.bridge_loader("target", "client")
+local target = zutils.bridge_loader("target")
 if not target then return end
 
 local targets = {}
@@ -8,6 +8,7 @@ zutils.target = {}
 function zutils.target.addBoxZoneTarget(id, coords, size, options)
     targets[#targets+1] = target.addBoxZoneTarget(id, coords, size, options)
 end
+
 zutils.target.AddBoxZoneTarget = zutils.target.addBoxZoneTarget -- Alias for compatibility
 
 function zutils.target.addEntityTarget(entities, options)

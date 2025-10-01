@@ -76,5 +76,23 @@ function inventory.registerShop(id, coords, label, items, society)
     })
 end
 
+local registerd_items = {}
+function inventory.createUseableItem(itemName, cb, opts)
+    registerd_items[itemName] = {
+        cb = cb
+    }
+    return true
+end
+
+
+AddEventHandler('ox_inventory:usedItem', function(playerId, name, slotId, metadata)
+    if registerd_items[name] then
+        registerd_items[name].cb(playerId, {
+            name = name,
+            slot = slotId,
+            metadate = metadata
+        })
+    end
+end)
 
 return inventory

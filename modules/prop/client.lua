@@ -72,9 +72,9 @@ function zutils.prop.createProp(model, coords, options, pedID)
     printdb("Creating prop %s at %s", model, coords)
     zutils.loadModel(model)
     local prop = CreateObject(model, coords.x, coords.y, coords.z, false, true, false)
-    
+
     SetEntityHeading(prop, coords.w or 0)
-    
+
     if not DoesEntityExist(prop) then
         return
     end
@@ -90,7 +90,7 @@ function zutils.prop.createProp(model, coords, options, pedID)
     if options.onSpawn then
         options.onSpawn(prop, id)
     end
-    
+
     if options.targetOptions then
         zutils.target.addEntityTarget(prop, options.targetOptions)
     end
@@ -110,7 +110,7 @@ AddEventHandler("onResourceStop", function(resource)
         else
             printdb("Prop(%s) %s does not exist, skipping deletion", data.prop, data.id)
         end
-            
+
     end
 end)
 

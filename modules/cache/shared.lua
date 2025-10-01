@@ -45,7 +45,7 @@ if isMainResource then
                     if vehicle ~= cache.vehicle then
                         cache.set("seat", false)
                     end
-    
+
                     if not cache.seat or _GetPedInVehicleSeat(vehicle, cache.seat) ~= ped then
                         for i = -1, _GetVehicleMaxNumberOfPassengers(vehicle) - 1 do
                             if _GetPedInVehicleSeat(vehicle, i) == ped then
@@ -54,13 +54,13 @@ if isMainResource then
                             end
                         end
                     end
-    
+
                     cache.set("vehicle", vehicle)
                 else
                     cache.set("seat", false)
                     cache.set("vehicle", false)
                 end
-    
+
                 Wait(100)
             end
         end)
@@ -82,7 +82,7 @@ else
         if value ~= nil then
             localCache[key] = value
         end
-        
+
         if not events[key] then
             events[key] = {}
             events[key][1] = function (new, old)

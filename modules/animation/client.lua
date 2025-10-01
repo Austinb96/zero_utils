@@ -1,6 +1,5 @@
 local emotes = zutils.bridge_loader("emote")
 if not emotes then return end
-
 zutils.animation = {}
 
 function zutils.animation.loadAnimDict(dict)

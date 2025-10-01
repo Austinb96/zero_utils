@@ -25,12 +25,11 @@ files {
     'modules/**/client.lua',
     'modules/**/shared.lua',
     'bridge/**/**/client.lua',
-    -- 'bridge/**/**/shared.lua',
+    'bridge/**/**/shared.lua',
     'shared/*.lua',
     'ui/build/index.html',
     'ui/build/**/*',
     'ui/assets/**/*'
 }
-
 
 dependency '/assetpacks'

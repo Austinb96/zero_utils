@@ -5,7 +5,7 @@ function zutils.ped.createPed(model, coords, options, pedId)
     coords = vector4(coords.x, coords.y, coords.z, coords.w or options.heading or 0)
     options = options or {}
     model = zutils.joaat(model)
-    local id = pedId or zutils.uuid()
+    local id = pedId or #peds + 1
     if not peds[id] then
         peds[id] = {}
     end
