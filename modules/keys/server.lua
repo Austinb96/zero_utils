@@ -1,4 +1,4 @@
-local keys = zutils.bridge_loader("keys", "server")
+local keys = zutils.bridge_loader("keys")
 if not keys then return end
 
 zutils.keys = {}

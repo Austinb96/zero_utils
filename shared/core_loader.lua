@@ -36,17 +36,19 @@ local core_definitions = {
         resource = "ox_lib",
         ignore_source = '@@ox_lib/init.lua',
         loader = function()
-            if lib then return lib end
+            if lib and lib.initialized then return lib end
             local chunk = LoadResourceFile("ox_lib", "init.lua")
             if not chunk then
                 printerr("Failed to load ox_lib: Resource file not found")
                 return nil
             end
+
             local fn, err = load(chunk, '@ox_lib/init.lua')
             if not fn then
                 printerr("Failed to load ox_lib: %s", err)
                 return nil
             end
+
             fn()
             return lib
         end
@@ -84,7 +86,7 @@ function zutils.core_loader(core_name)
             return nil
         end
     end
-
+    
     local success, core = pcall(core_def.loader)
 
     loading_cores[core_name] = nil
@@ -105,8 +107,7 @@ end
 
 if not zutils.isResourceMissing("qb-core") then
     if not zutils.isResourceStarted("qb-core") then
-        printwarn("QBCore is not started, please ensure that qb-core is started before this script.")
-        return
+        printerr("QBCore is not started, please ensure that qb-core is ensure before this script is.")
     end
     if QBCore then return end
     QBCore = {}

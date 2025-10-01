@@ -8,7 +8,6 @@ zutils.target = {}
 function zutils.target.addBoxZoneTarget(id, coords, size, options)
     targets[#targets+1] = target.addBoxZoneTarget(id, coords, size, options)
 end
-
 zutils.target.AddBoxZoneTarget = zutils.target.addBoxZoneTarget -- Alias for compatibility
 
 function zutils.target.addEntityTarget(entities, options)

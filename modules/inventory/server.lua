@@ -2,7 +2,6 @@ local inventory = zutils.bridge_loader("inventory", "server")
 if not inventory then return end
 
 zutils.inventory = {}
-
 local personal_stashes = {}
 
 function zutils.inventory.getItemInfo(item)
@@ -69,7 +68,6 @@ function zutils.inventory.removeItem(inv, item, count, metadata, slot, cb)
     end
     return true
 end
-
 zutils.inventory.RemoveItem = zutils.inventory.removeItem -- Alias for compatibility
 
 function zutils.inventory.canCarryItem(inv, item, count, metadata)
@@ -89,7 +87,7 @@ function zutils.inventory.registerStash(id, label, slots, max_weight, owner, gro
     coords = coords and coords.xyz or nil
 
     if is_personal then
-        printdb( "Registering personal stash: %s", id)
+        printdb("Registering personal stash: %s", id)
         personal_stashes[id] = {
             label = label,
             slots = slots or 50,
@@ -102,8 +100,8 @@ function zutils.inventory.registerStash(id, label, slots, max_weight, owner, gro
     end
     slots = slots or 50
     max_weight = max_weight or 1000000
+    printdb("Registering stash: %s with label: %s, slots: %s, max_weight: %s, owner: %s, groups: %s, coords: %s", id, label, slots, max_weight, owner, groups, coords and json.encode(coords) or "nil")
     inventory.registerStash(id, label, slots, max_weight, owner, groups, coords)
-    printdb( "Registered stash: %s with label: %s, slots: %s, max_weight: %s, owner: %s", id, label, slots, max_weight, owner)
 end
 
 zutils.inventory.RegisterStash = zutils.inventory.registerStash -- Alias for compatibility

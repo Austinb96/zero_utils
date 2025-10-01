@@ -1,9 +1,11 @@
 local peds = {}
 zutils.ped = {}
 function zutils.ped.createPed(model, coords, options, pedId)
+    if not coords then return printerr("coords not defined") end
+    coords = vector4(coords.x, coords.y, coords.z, coords.w or options.heading or 0)
     options = options or {}
     model = zutils.joaat(model)
-    local id = pedId or #peds + 1
+    local id = pedId or zutils.uuid()
     if not peds[id] then
         peds[id] = {}
     end
@@ -23,9 +25,12 @@ function zutils.ped.createPed(model, coords, options, pedId)
                 if options.onSpawn then options.onSpawn(newped, id) end
             end,
             onExit = function()
-                if DoesEntityExist(peds[id].ped) then
-                    DeleteEntity(peds[id].ped)
+                local ped = peds[id]
+                if not ped then printwarn("ped(%s) id:%s was did not exist on exit", ped.ped, id) return end
+                if DoesEntityExist(ped.ped) then
+                    DeleteEntity(ped.ped)
                     if options.onDespawn then options.onDespawn() end
+                    printdb("ped(%s) with id: %s despawend", ped.ped, id)
                 end
             end,
             onRemove = function()
@@ -34,14 +39,12 @@ function zutils.ped.createPed(model, coords, options, pedId)
                 if DoesEntityExist(ped.ped) then
                     DeleteEntity(ped.ped)
                     if options.onDespawn then options.onDespawn() end
+                    printdb("ped(%s) with id: %s removed", ped.ped, id)
                 end
             end
         })
         peds[id].pointID = pointID
-        local playercoords = GetEntityCoords(PlayerPedId())
-        if #(playercoords - coords.xyz) > (options.distance + 10) then
-            return
-        end
+        return nil, pointID
     end
 
     printdb("Creating ped %s at %s", model, coords)
@@ -159,6 +162,7 @@ function zutils.ped.createPed(model, coords, options, pedId)
     SetPedCanLosePropsOnDamage(ped, false, 0)
 
     if options.onSpawn then options.onSpawn(ped, id) end
+    printdb("ped(%s) spawned with id:%s", ped, id)
     SetModelAsNoLongerNeeded(model)
     return ped, id
 end
@@ -172,7 +176,7 @@ local function getPedByEntity(ped)
     return nil
 end
 
-function zutils.ped.RemovePed(pedid)
+function zutils.ped.removePed(pedid)
     local ped = peds[pedid] or getPedByEntity(pedid)
     if not ped then
         printerr("Ped not found for id %s", pedid)
@@ -187,6 +191,7 @@ function zutils.ped.RemovePed(pedid)
     end
     peds[pedid] = nil
 end
+zutils.ped.RemovePed = zutils.ped.removePed
 
 function zutils.ped.turnTo(ped, target, duration)
     if not DoesEntityExist(ped) then return false, "ped does not exist" end

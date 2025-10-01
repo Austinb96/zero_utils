@@ -1,4 +1,4 @@
-local player = zutils.bridge_loader("core", "shared")
+local player = zutils.bridge_loader("core")
 if not player then return end
 
 zutils.player = {}

@@ -1,4 +1,4 @@
-local core = zutils.bridge_loader("core", "client")
+local core = zutils.bridge_loader("core")
 if not core then return end
 
 zutils.cache.job = {
@@ -13,7 +13,7 @@ zutils.events.onPlayerLoaded(function()
     local job = zutils.player.getJob()
     local onduty = job.onduty
     if onduty == nil then onduty = job.onDuty end
-
+    --TODO wtf is all this
     local gradeLevel, isboss
     if type(job.grade) == "table" then
         gradeLevel = job.grade.level or tonumber(job.grade) or 0
@@ -36,7 +36,7 @@ end)
 core.onJobUpdate(function(job)
     local onduty = job.onduty
     if onduty == nil then onduty = job.onDuty end
-
+    --TODO wtf is all this
     local gradeLevel, isboss
     if type(job.grade) == "table" then
         gradeLevel = job.grade.level or tonumber(job.grade) or 0

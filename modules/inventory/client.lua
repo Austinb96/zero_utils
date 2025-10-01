@@ -21,6 +21,7 @@ zutils.inventory.OpenInventory = zutils.inventory.openInventory -- Alias for com
 function zutils.inventory.hasItem(item, count, metadata)
     return inventory.hasItem(item, count, metadata)
 end
+
 zutils.inventory.HasItem = zutils.inventory.hasItem -- Alias for compatibility
 
 function zutils.inventory.getItemInfo(item)
