@@ -1,43 +1,18 @@
-print('Loading zero_utils')
 local resourceName = GetCurrentResourceName()
 local zero_utils = 'zero_utils'
 local LoadResourceFile = LoadResourceFile
+local debug_getinfo = debug.getinfo
 
-require = function(path)
-    local chunk = LoadResourceFile("zero_utils", path)
-    if not chunk then return error(("failed to find module (%s)"):format(path)) end
-    local fn, err = load(chunk, ('@@zero_utils/%s'):format(path))
-    if not fn or err then return error(('\n^1Error importing module (%s): %s^0'):format(path, err), 3) end
-    if not fn or err then return error(("failed to import module (%s) %s"):format(path, err)) end
-    if printdb then printdb('imported module (%s)', path) end
-    return fn()
-end
-
-
-if resourceName == zero_utils then 
-    local debug_getinfo = debug.getinfo
-    zutils = setmetatable({
-        name = zero_utils,
-        context = IsDuplicityVersion() and 'server' or 'client',
-    }, {
-        __newindex = function(self, name, fn)
-            rawset(self, name, fn)
-            if debug_getinfo(2, 'S').short_src:find('.*@zero%_utils.*') then
-                exports(name, fn)
-            end
-        end
-    })
-    return
-end
-
-
+if not Config then Config = {} end
+if not Config.Bridge then Config.Bridge = {} end
 
 local function loadModule(self, module)
     local paths = {
-        ("%s/imports/%s.lua"):format(self.context, module),
-        ("shared/imports/%s.lua"):format(module)
+        ("modules/%s/%s.lua"):format(module, self.context),
+        ("modules/%s/shared.lua"):format(module),
+        ("shared/%s.lua"):format(module),
     }
-    
+
     for _, path in ipairs(paths) do
         local chunk = LoadResourceFile(zero_utils, path)
         if chunk then
@@ -54,17 +29,15 @@ local function loadModule(self, module)
         end
     end
 end
-
-
 local function call(self, index, ...)
     local module = rawget(self, index)
 
     if module then
         return module
     end
-    -- Use custom require to attempt to load the module
+
     module = loadModule(self, index)
-    
+
     if module then
         rawset(self, index, module)
         return module
@@ -75,7 +48,7 @@ local function call(self, index, ...)
         local function method(...)
             return exports[index](nil, ...)
         end
-        
+
         if not ... then
             rawset(self, index, method)
         end
@@ -85,20 +58,41 @@ local function call(self, index, ...)
         printerr("Failed to load module (%s). Make sure function is correct!", index)
     end
 end
-zutils = setmetatable({
+
+local zutils = setmetatable({
     name = resourceName,
     context = IsDuplicityVersion() and 'server' or 'client',
+    initialized = false
 }, {
+    __newindex = function(self, name, fn)
+        rawset(self, name, fn)
+        if resourceName ~= zero_utils then return end
+        if debug_getinfo(2, 'S').short_src:find('.*@zero%_utils.*') then
+            exports(name, fn)
+        end
+    end,
     __index = call,
     __call = call
 })
+_ENV.zutils = zutils
 
-if not Config.Bridge then Config.Bridge = {} end
+zutils.require = function(path)
+    local chunk = LoadResourceFile("zero_utils", path)
+    if not chunk then return error(("failed to find module (%s)"):format(path)) end
+    local fn, err = load(chunk, ('@@zero_utils/%s'):format(path))
+    if not fn or err then return error(('\n^1Error importing module (%s): %s^0'):format(path, err), 3) end
+    if not fn or err then return error(("failed to import module (%s) %s"):format(path, err)) end
+    return fn()
+end
+if zutils.name == "zero_utils" then
+    Config = Config or {}
+    Config.Debug = true
+end
+zutils.require('/shared/printutils.lua')
+zutils.require('/shared/utils.lua')
+zutils.require('/shared/core_loader.lua')
 
-require('/shared/printutils.lua')
-require('/shared/utils.lua')
-require(('/%s/utils.lua'):format(zutils.context))
+zutils.initialized = true
 
-
-printdb('Loaded zero_utils')
-
+local _ = zutils.cache
+printdb("zero_utils initialized: %s", zutils.initialized)

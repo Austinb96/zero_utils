@@ -1,0 +1,161 @@
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) var(--background2-color);
+}
+
+html {
+    font-size: clamp(12px, 1.1vw, 32px);
+    color: var(--text-color);
+    font-family: 'Fira Code', 'Consolas', monospace;
+}
+
+body {
+    position: fixed;
+    height: 100vh;
+    width: 100vw;
+    max-width: 800px;
+    overflow: hidden;
+}
+
+main {
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.flex-fill , .flex-fill-col {
+    background-size: cover;
+    background-repeat: no-repeat;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.flex-fill-col {
+    flex-direction: column;
+}
+
+.flex-center{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flex-center-col{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.black-border {
+    border: 1px solid black;
+}
+
+.debug-border {
+    border: 1px solid red;
+}
+
+.border-black{
+    border: 1px solid black;
+}
+
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--background2-color);
+    border-radius: 8px;
+    margin: 2px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 8px;
+    border: 1px solid var(--background2-color);
+    transition: all 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary-color);
+    border-color: var(--background-color);
+    box-shadow: 0 0 8px var(--primary-color-transparent);
+}
+
+::-webkit-scrollbar-thumb:active {
+    background: var(--color1);
+}
+
+::-webkit-scrollbar-corner {
+    background: var(--background2-color);
+}
+
+.scrollbar-primary::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
+}
+
+.scrollbar-success::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--color2), var(--primary-color));
+}
+
+.scrollbar-warning::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--color3), var(--primary-color));
+}
+
+.scrollbar-danger::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--color4), var(--primary-color));
+}
+
+/* Thin scrollbar variant */
+.scrollbar-thin::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+    border: none;
+    border-radius: 4px;
+}
+
+.scrollbar-hidden {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+}
+
+.scrollbar-fancy::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, 
+        var(--primary-color), 
+        var(--secondary-color), 
+        var(--color1), 
+        var(--color2)
+    );
+    background-size: 300% 300%;
+    animation: scrollbar-gradient 3s ease infinite;
+}
+
+@keyframes scrollbar-gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.scrollbar-fancy::-webkit-scrollbar-thumb:hover {
+    animation-duration: 1s;
+    box-shadow: 
+        0 0 10px var(--primary-color),
+        0 0 20px var(--primary-color-transparent),
+        inset 0 0 10px var(--secondary-color);
+}

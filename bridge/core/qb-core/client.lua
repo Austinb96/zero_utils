@@ -1,0 +1,72 @@
+local core = {}
+
+function core.getPlayerData()
+    local player_data = QBCore.Functions.GetPlayerData()
+    if not player_data then return false, "Player Data not found" end
+    return player_data
+end
+
+function core.getJob()
+    local player_data, err = core.getPlayerData()
+    if not player_data then return false, err end
+    local job = player_data.job
+    if not job then return false, "Job not found" end
+    return job
+end
+
+function core.getJobData(jobName)
+    local job_data = QBCore.Shared.Jobs[jobName]
+    if not job_data then return false, "Job not found" end
+    return job_data
+end
+
+function core.getGroupInfo(isJob)
+    local data = core.getPlayerData()
+    local group = isJob and data?.job or data?.gang
+    return {
+        name = group.name,
+        grade = group.grade.level,
+        label = group.label,
+        isBoss = group.grade.isboss or false,
+    }
+end
+
+function core.getGender()
+    local data = core.getPlayerData()
+    return (data.charinfo.gender or 0) + 1 -- 1 = Male, 2 = Female
+end
+
+function core.getGang()
+    local player_data, err = core.getPlayerData()
+    if not player_data then return false, err end
+    local gang = player_data.gang
+    if not gang then return false, "Gang not found" end
+    return gang
+end
+
+function core.isDead()
+    local data = core.getPlayerData()
+    return data.metadata and data.metadata.isdead
+end
+
+function core.getVehicleProperties(vehicle)
+    local properties = QBCore.Functions.GetVehicleProperties(vehicle)
+    if not properties then return false, "Failed to get vehicle properties" end
+    return properties
+end
+
+function core.toggleDuty(duty, src)
+    if not duty then
+        TriggerServerEvent("QBCore:ToggleDuty")
+    else
+        local player = core.getPlayerData(src)
+        if not player then return false, "Player Data not found" end
+        player.Functions.SetJobDuty(duty)
+    end
+end
+
+function core.onJobUpdate(cb)
+    RegisterNetEvent("QBCore:Client:OnJobUpdate", cb)
+end
+
+return core
