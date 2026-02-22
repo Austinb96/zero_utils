@@ -47,4 +47,8 @@ function inventory.Image(item)
     return 'https://cfx-nui-ox_inventory/web/images/'..item..'.png'
 end
 
+function inventory.setBusy(busy)
+    LocalPlayer.state.invBusy = busy
+end
+
 return inventory
