@@ -35,6 +35,10 @@ function inventory.hasItem(item, count, metadata)
     return false, "You do not have enough: " .. item
 end
 
+function inventory.findItem(item, metadata)
+    return ox_inventory:Search('slots', item, metadata)
+end
+
 function inventory.openInventory(inv_type, id)
     ox_inventory:openInventory(inv_type, id)
 end
