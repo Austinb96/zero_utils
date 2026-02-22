@@ -1,4 +1,3 @@
-
 local config_ = Config or config or cfg
 if config_ and not config_.Bridge then config_.Bridge = {} end
 CreateThread(function()
@@ -79,6 +78,10 @@ local default_bridges = {
         "dpemotes",
         "emotes"
     },
+    fuel = {
+        "cc-fuel",
+        "ox_fuel"
+    }
 }
 
 local bridge_aliases  = {
@@ -172,6 +175,7 @@ end
 local function find_active_bridge(module_name, context)
     while not config_ do Wait(0) end
     if config_.Bridge[module_name] then return resolve_bridge_alias(module_name, Config.Bridge[module_name]) end
+    local bridges = default_bridges[module_name]
     if not bridges then
         printerr("No default bridges found for module: %s", module_name)
         return nil
@@ -230,17 +234,31 @@ local function bridge_loader(module_name)
         return zutils.require(context_path)
     end)()
 
-    shared_bridge = table.combine(shared_bridge or {}, context_bridge or {})
+    local context_type = type(context_bridge)
+    local shared_type = type(shared_bridge)
+    if context_type == "table" and shared_type == "table" then
+        final_bridge = table.combine(shared_bridge or {}, context_bridge or {})
+    elseif shared_type == "function" and context_type == "function" then
+        final_bridge = context_bridge
+    elseif shared_type == "table" and context_type == "function" then
+        printwarn("mixed bridge types shared:%s, context:%s", shared_type, context_type)
+        final_bridge = shared_bridge
+    elseif shared_type == "function" and context_type == "table" then
+        printwarn("mixed bridge types shared:%s, context:%s", shared_type, context_type)
+        final_bridge = context_bridge
+    else
+        final_bridge = context_bridge or shared_bridge
+    end
 
-    if not shared_bridge then
+    if not final_bridge then
         printerr("No bridge files found for module: %s, resource: %s", module_name, bridge_resource)
         return nil
     end
 
     printdb("Successfully loaded bridge: %s (%s)", module_name, context)
 
-    loaded[module_name .. context] = shared_bridge
-    return shared_bridge
+    loaded[module_name .. context] = final_bridge
+    return final_bridge
 end
 
 zutils.bridge_loader = bridge_loader
