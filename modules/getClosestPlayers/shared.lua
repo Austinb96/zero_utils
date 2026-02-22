@@ -18,7 +18,7 @@ function zutils.getClosestPlayers(src, max_distance)
 
             if distance < max_distance then
                 close_players[#close_players + 1] = {
-                    player = player,
+                    player = zutils.context == "client" and GetPlayerServerId(tonumber(player)) or player,
                     ped = ped,
                     coords = other_coords,
                     distance = distance
@@ -26,6 +26,10 @@ function zutils.getClosestPlayers(src, max_distance)
             end
         end
     end
+
+    table.sort(close_players, function(a, b)
+        return a.distance < b.distance
+    end)
     return close_players
 end
 
