@@ -109,4 +109,21 @@ target.addGlobalVehicle = function(name, options)
     }
 end
 
+target.removeNetIDTarget = function(netId, options)
+    qb_target:RemoveTargetEntity(netId, options)
+end
+
+target.removeEntityTarget = function(entities, options)
+    qb_target:RemoveTargetEntity(entities, options)
+end
+
+
+target.removeModelTarget = function(model, options)
+    qb_target:RemoveTargetModel(model, options)
+end
+
+target.removeZoneTarget = function(id)
+    qb_target:RemoveZone(id)
+end
+
 return target

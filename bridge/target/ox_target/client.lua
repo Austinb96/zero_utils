@@ -122,4 +122,20 @@ target.addGlobalVehicle = function(name, options)
     }
 end
 
+target.removeEntityTarget = function(entities, options)
+    exports.ox_target:removeLocalEntity(entities, formatOptions(options))
+end
+
+target.removeNetIDTarget = function(netID, options)
+    exports.ox_target:removeEntity(netID, formatOptions(options))
+end
+
+target.removeModel = function(model, options)
+    exports.ox_target:removeModel(model, formatOptions(options))
+end
+
+target.removeZoneTarget = function(id)
+    exports.ox_target:removeZone(id)
+end
+
 return target
