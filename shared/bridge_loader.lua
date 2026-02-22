@@ -1,4 +1,13 @@
-if not Config.Bridge then Config.Bridge = {} end
+
+local config_ = Config or config or cfg
+if config_ and not config_.Bridge then config_.Bridge = {} end
+CreateThread(function()
+    while config_ == nil do
+        config_ = Config or config or cfg
+        if not config_ and GetResourceState(zutils.name) == "started" then config_ = { Bridge = {} } end
+        Wait(0)
+    end
+end)
 local loaded          = {}
 
 local default_bridges = {
@@ -161,8 +170,8 @@ local function is_bridge_started(bridge_key)
 end
 
 local function find_active_bridge(module_name, context)
-    if Config.Bridge[module_name] then return resolve_bridge_alias(module_name, Config.Bridge[module_name]) end
-    local bridges = default_bridges[module_name]
+    while not config_ do Wait(0) end
+    if config_.Bridge[module_name] then return resolve_bridge_alias(module_name, Config.Bridge[module_name]) end
     if not bridges then
         printerr("No default bridges found for module: %s", module_name)
         return nil
