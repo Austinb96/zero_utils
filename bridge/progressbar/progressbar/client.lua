@@ -9,7 +9,7 @@ local progressBar = function(name, label, duration, options)
         canCancel = options.canCancel,
         controlDisables = options.controlDisables,
         animation = {
-            animDict = options.animation.dict or options.animDict,
+            animDict = options.animation.dict or options.animation.animDict,
             anim = options.animation.anim,
             flags = options.animation.flags
         },
