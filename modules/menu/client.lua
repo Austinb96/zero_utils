@@ -24,8 +24,13 @@ zutils.menu.inputDialog = function(header, inputs)
     return menu.inputDialog(header, inputs)
 end
 
-zutils.menu.closeMenu = function()
-    menu.closeMenu()
+function zutils.menu.close(trigger_exit)
+    menu.close(trigger_exit)
 end
+
+AddEventHandler('onResourceStop', function(resource)
+    if resource ~= GetCurrentResourceName() then return end
+    menu.close()
+end)
 
 return zutils.menu
