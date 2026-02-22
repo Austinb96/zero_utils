@@ -16,7 +16,7 @@ function menu.inputDialog(header, inputs)
 end
 
 function menu.closeMenu()
-    lib.hideContext()
+    lib.hideMenu()
 end
 
 return menu
