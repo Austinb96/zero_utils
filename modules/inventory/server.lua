@@ -133,7 +133,7 @@ function zutils.inventory.craftItem(src, items, ingredients, options)
     
     if type(ingredients) == "string" then
         ingredients = {{ingredients, 1}}
-    elseif ingredients[1] and type(ingredients[1] == "string") then
+    elseif ingredients[1] and type(ingredients[1]) == "string" then
         ingredients = { ingredients }
     end
 
