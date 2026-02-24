@@ -15,7 +15,7 @@ function menu.inputDialog(header, inputs)
     return lib.inputDialog(header, inputs)
 end
 
-function menu.closeMenu()
+function menu.close()
     lib.hideMenu()
 end
 

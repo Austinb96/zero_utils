@@ -43,7 +43,7 @@ function menu.inputDialog(header, inputs)
     })
 end
 
-function menu.closeMenu()
+function menu.close()
     exports['qb-menu']:closeMenu()
 end
 
