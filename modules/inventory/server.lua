@@ -122,7 +122,7 @@ function zutils.inventory.craftItem(src, items, ingredients, options)
     elseif items[1] and type(items[1]) == "string" then
         items = { items }
     end
-    
+
     if type(items) == "table" and not items[1] then
         local temp = {}
         for k, v in pairs(items) do
@@ -130,7 +130,7 @@ function zutils.inventory.craftItem(src, items, ingredients, options)
         end
         items = temp
     end
-    
+
     if type(ingredients) == "string" then
         ingredients = {{ingredients, 1}}
     elseif ingredients[1] and type(ingredients[1]) == "string" then
@@ -196,16 +196,15 @@ function zutils.inventory.craftItem(src, items, ingredients, options)
         return false, "Not enough slots to craft items"
     end
 
-    
+
     --TODO add options for animations and wait times between crafting items
     for i = 1, amount do
         for _, ing in ipairs(ingredients) do
             printdb( "CRAFTING: Removing ingredient %s x %s", ing[1], ing[2])
             local success, err = zutils.inventory.removeItem(src, ing[1], ing[2])
-            print(success, err)
             if not success then return false, err or "Failed to remove ingredients" end
         end
-    
+
     end
 
     for i = 1, amount do
