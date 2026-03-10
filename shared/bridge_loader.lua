@@ -68,6 +68,7 @@ local default_bridges = {
     bossmenu = {
         "qb_management",
         "qbx_management",
+        "zero_groupmenu"
     },
     keys = {
         "dusa_vehiclekeys"
@@ -144,6 +145,7 @@ local bridge_aliases  = {
     bossmenu = {
         qb = "qb-management",
         qbx = "qbx_management",
+        zero = "zero_groupmenu"
     }
 }
 
