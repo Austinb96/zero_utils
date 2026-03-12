@@ -19,6 +19,12 @@ local default_bridges = {
     banking = {
         "fd_banking",
     },
+    billing = {
+        "okokBilling",
+        "codem-billing",
+        "jim-payments",
+        "tgg-billing"
+    },
     inventory = {
         "ox_inventory",
         "qb-inventory",
@@ -99,6 +105,12 @@ local bridge_aliases  = {
     },
     banking = {
         fd = "fd_banking",
+    },
+    billing = {
+        okok = "okokBilling",
+        codem = "codem-billing",
+        jim = "jim-payments",
+        tgg = "tgg-billing"
     },
     notify = {
         ox = "ox_lib",
