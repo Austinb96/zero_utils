@@ -1,7 +1,7 @@
 local bossmenu = {}
 
 function bossmenu.open(groupType, group)
-    exports.qbx_management:OpenBossMenu(groupType)
+    TriggerEvent("tss-bossmenu:client:OpenMenu")
 end
 
 return bossmenu
