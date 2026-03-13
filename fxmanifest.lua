@@ -9,13 +9,20 @@ use_experimental_fxv2_oal 'yes'
 
 client_scripts {
     "init.lua",
-    "client/*.lua",
+    "client/**/*.lua",
+    "ztools/**/client.lua",
 }
 
 server_scripts {
     '@oxmysql/lib/MySQL.lua',
     "init.lua",
     "server/*.lua",
+    "ztools/**/server.lua",
+}
+
+shared_scripts {
+    'config.lua',
+    "ztools/**/shared.lua",
 }
 
 ui_page 'ui/build/index.html'
@@ -25,11 +32,12 @@ files {
     'modules/**/client.lua',
     'modules/**/shared.lua',
     'bridge/**/**/client.lua',
-    'bridge/**/**/shared.lua',
+    -- 'bridge/**/**/shared.lua',
     'shared/*.lua',
     'ui/build/index.html',
     'ui/build/**/*',
     'ui/assets/**/*'
 }
+
 
 dependency '/assetpacks'

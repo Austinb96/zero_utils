@@ -11,13 +11,34 @@ function core.getJob()
     if not player_data then return false, err end
     local job = player_data.job
     if not job then return false, "Job not found" end
-    return job
+    return {
+        name = job.name,
+        onduty = job.onduty,
+        isboss = job.isboss,
+        label = job.label,
+        grade = job.grade.level,
+        gradename = job.grade.name,
+        type = job.type,
+        bankAuth = job.bankAuth
+    }
 end
 
-function core.getJobData(jobName)
-    local job_data = QBCore.Shared.Jobs[jobName]
-    if not job_data then return false, "Job not found" end
-    return job_data
+function core.getGender()
+    local data = core.getPlayerData()
+    return (data.charinfo.gender or 0) + 1 -- 1 = Male, 2 = Female
+end
+
+function core.isDead()
+    local data = core.getPlayerData()
+    return data.metadata and data.metadata.isdead
+end
+
+function core.getGang()
+    local player_data, err = core.getPlayerData()
+    if not player_data then return false, err end
+    local gang = player_data.gang
+    if not gang then return false, "Gang not found" end
+    return gang
 end
 
 function core.getGroupInfo(isJob)
@@ -31,22 +52,10 @@ function core.getGroupInfo(isJob)
     }
 end
 
-function core.getGender()
-    local data = core.getPlayerData()
-    return (data.charinfo.gender or 0) + 1 -- 1 = Male, 2 = Female
-end
-
-function core.getGang()
-    local player_data, err = core.getPlayerData()
-    if not player_data then return false, err end
-    local gang = player_data.gang
-    if not gang then return false, "Gang not found" end
-    return gang
-end
-
-function core.isDead()
-    local data = core.getPlayerData()
-    return data.metadata and data.metadata.isdead
+function core.getJobData(jobName)
+    local job_data = QBCore.Shared.Jobs[jobName]
+    if not job_data then return false, "Job not found" end
+    return job_data
 end
 
 function core.getVehicleProperties(vehicle)
@@ -66,7 +75,17 @@ function core.toggleDuty(duty, src)
 end
 
 function core.onJobUpdate(cb)
-    RegisterNetEvent("QBCore:Client:OnJobUpdate", cb)
+    RegisterNetEvent("QBCore:Client:OnJobUpdate", function(job)
+        cb({
+            name = job.name,
+            onduty = job.onduty,
+            isboss = job.isboss,
+            label = job.label,
+            grade = job.grade.level,
+            gradename = job.grade.name,
+            type = job.type
+        })
+    end)
 end
 
 return core

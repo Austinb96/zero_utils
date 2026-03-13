@@ -3,9 +3,6 @@ local zero_utils = 'zero_utils'
 local LoadResourceFile = LoadResourceFile
 local debug_getinfo = debug.getinfo
 
-if not Config then Config = {} end
-if not Config.Bridge then Config.Bridge = {} end
-
 local function loadModule(self, module)
     local paths = {
         ("modules/%s/%s.lua"):format(module, self.context),
@@ -62,7 +59,8 @@ end
 local zutils = setmetatable({
     name = resourceName,
     context = IsDuplicityVersion() and 'server' or 'client',
-    initialized = false
+    initialized = false,
+    ENV = GetConvar("ENV", "production")
 }, {
     __newindex = function(self, name, fn)
         rawset(self, name, fn)
@@ -76,23 +74,40 @@ local zutils = setmetatable({
 })
 _ENV.zutils = zutils
 
+local loaded = {}
+---@param path string The path to the module file
+---@return unknown result The loaded module
 zutils.require = function(path)
+    if loaded[path] then return loaded[path] end
     local chunk = LoadResourceFile("zero_utils", path)
-    if not chunk then return error(("failed to find module (%s)"):format(path)) end
-    local fn, err = load(chunk, ('@@zero_utils/%s'):format(path))
+    if not chunk then
+        path = path:gsub("%.", "/")..".lua"
+        chunk = LoadResourceFile(zutils.name, path)
+    end
+    if not chunk then
+        return error(("failed to find module (%s)"):format(path))
+    end
+    local fn, err = load(chunk, ('@@%s/%s'):format(zutils.name, path))
     if not fn or err then return error(('\n^1Error importing module (%s): %s^0'):format(path, err), 3) end
     if not fn or err then return error(("failed to import module (%s) %s"):format(path, err)) end
-    return fn()
+    
+    local result = fn()
+    if result == nil then
+        result = {}
+    end
+    loaded[path] = result
+    return loaded[path]
 end
-if zutils.name == "zero_utils" then
-    Config = Config or {}
-    Config.Debug = true
-end
+
+
 zutils.require('/shared/printutils.lua')
 zutils.require('/shared/utils.lua')
 zutils.require('/shared/core_loader.lua')
 
-zutils.initialized = true
+while not zutils.isResourceStarted("zero_utils") do
+    Wait(0)
+end
 
+zutils.initialized = true
 local _ = zutils.cache
 printdb("zero_utils initialized: %s", zutils.initialized)

@@ -1,28 +1,57 @@
 local Print = print
 local resourceName = GetCurrentResourceName()
-local printDebug = nil
-local canDebug = {}
-
+local canDebug = nil
+local resourcprefix = zutils and zutils.name ~= resourceName and "" or nil
+local config_ = Config or config or cfg
 CreateThread(function()
-    if not Config then
-        printwarn("Config not found, using default settings for PrintUtils")
-        Config = { PrintDebug = false }
+    while config_ == nil do
+        Wait(0)
+        config_ = Config or config or cfg
+        if not config_ and GetResourceState(resourceName) == "started" then config_ = {} end
     end
-    if Config.PrintDebug ~= nil then printDebug = Config.PrintDebug end
-    if type(Config.Debug) == "table" then
-        if Config.Debug.PrintDebug ~= nil then
-            printDebug = Config.Debug.PrintDebug
-        else
-            printDebug = Config.Debug.Debug
-        end
-    end
-    if printDebug == nil then
-        printDebug = Config.Debug or false
-    end
-    canDebug[resourceName] = not (GetConvar("DisableDebug", "false") == "true") and printDebug
 end)
 
-local resourcprefix = zutils and zutils.name ~= resourceName and "" or nil
+local function canPrint()
+    if canDebug ~= nil then
+        return canDebug
+    end
+
+    local disableDebugConvar = GetConvar("DisableDebug", "false")
+    if disableDebugConvar == "true" then
+        canDebug = false
+        return canDebug
+    end
+
+    while config_ == nil do
+        Wait(0)
+    end
+
+    if config_.PrintDebug ~= nil then
+        canDebug = config_.PrintDebug
+        return canDebug
+    end
+
+    if not config_.Debug then
+        return false
+    end
+
+    if type(config_.Debug) == "boolean" then
+        canDebug = config_.Debug
+        return canDebug
+    end
+
+    if config_.Debug.PrintDebug ~= nil then
+        canDebug = config_.Debug.PrintDebug
+        return canDebug
+    end
+
+    if config_.Debug.Debug ~= nil then
+        canDebug = config_.Debug.Debug
+        return canDebug
+    end
+
+    return false
+end
 
 Color = {
     White = "^0",
@@ -33,21 +62,6 @@ Color = {
     LightBlue = "^5",
     Violet = "^6",
 }
-
-local canPrint
-if resourceName == "zero_utils" then
-    canPrint = function()
-        local resource = GetInvokingResource() or resourceName
-        if canDebug[resource] == nil then
-            return false
-        end
-        return canDebug[resource]
-    end
-else
-    canPrint = function()
-        return canDebug[resourceName]
-    end
-end
 
 local function getFormattedText(text, args, textColor)
     if not args then return textColor .. text end
@@ -254,30 +268,10 @@ PrintUtils = {
         if not value then return end
         print("Setting Debug to: ", value)
         printDebug = value
-        if not canDebug then
-            canDebug = {}
-            resourceName = GetCurrentResourceName()
-        end
-
-        canDebug[resourceName] = value
+        canDebug = value
     end,
 }
 
 if not resourceName then
     PrintUtils.Colors = Color
-end
-
-if resourceName == "zero_utils" then
-    function zutils.GetPrintUtils(canDebugResource)
-        local resource = GetInvokingResource()
-        canDebug[resource] = not (GetConvar("DisableDebug", "false") == "true") and canDebugResource
-        printdb("CanDebug set for %s(%s) should be %s", resource, canDebug[resource], canDebugResource)
-        printmulti({
-            { "PrintUtils.GetPrintUtils is deprecated",                           color = Color.Yellow },
-            { "Please use import in fxmanifest",                                  color = Color.Yellow },
-            { "shared_scripts { \n    '@zero_utils/shared/printutils.lua'   or ", color = Color.Yellow },
-            { "   '@zero_utils/init.lua' \n}",                                    color = Color.Yellow },
-        }, { color = Color.Yellow })
-        return PrintUtils
-    end
 end

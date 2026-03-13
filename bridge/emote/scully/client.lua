@@ -1,12 +1,12 @@
-local emote = {}
+local emotes = {}
 
-function emote.start(name, texture_variation)
+function emotes.start(name, texture_variation)
     exports.scully_emotemenu:playEmoteByCommand(name)
 end
 
-function emote.cancel()
+function emotes.cancel()
     exports.scully_emotemenu:cancelEmote()
 end
 
 
-return emote
+return emotes

@@ -35,9 +35,16 @@ function inventory.findItem(inv, item, metadata)
     return ox_inventory:Search(inv, 'slots', item, metadata)
 end
 
+function inventory.getItemCount(inv, item, metadata)
+    return ox_inventory:Search(inv, 'count', item, metadata)
+end
+
 function inventory.hasItem(inv, item, count, metadata)
     local result = exports.ox_inventory:Search(inv, 'count', item, metadata)
-    if result >= (count or 1) then return true end
+    if type(result) == "table" then
+        result = result[item] or result[string.upper(item)]
+    end
+    if (result or 0) >= (count or 1) then return true end
     return false, "You do not have enough: " .. item
 end
 
@@ -90,7 +97,7 @@ AddEventHandler('ox_inventory:usedItem', function(playerId, name, slotId, metada
         registerd_items[name].cb(playerId, {
             name = name,
             slot = slotId,
-            metadate = metadata
+            metadata = metadata
         })
     end
 end)

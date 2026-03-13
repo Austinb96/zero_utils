@@ -1,11 +1,11 @@
-local emote = {}
+local emotes = {}
 
-function emote.start(name, texture_variation)
+function emotes.play(name, texture_variation)
     TriggerEvent('animations:client:EmoteCommandStart', {name})
 end
 
-function emote.cancel()
+function emotes.stop()
     TriggerEvent('animations:client:EmoteCommandStart', {"c"})
 end
 
-return emote
+return emotes

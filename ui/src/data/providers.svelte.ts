@@ -1,6 +1,7 @@
 class Providers {
-    isVisible = $state(false);
-    cameraActive = $state(false);
+    isVisible:boolean = $state(false);
+    cameraActive: boolean = $state(false);
+    tab: string = $state("all")
 }
 
 export const providers = new Providers();

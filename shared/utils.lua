@@ -16,11 +16,11 @@ function zutils.isResourceMissing(resource)
     local state = GetResourceState(resource)
     if state == "missing" then
         printdb("Resource [%s] is missing", resource)
-        return true
+        return true, state
     end
 
     printdb("Resource [%s] is present", resource)
-    return false
+    return false, state
 end
 
 function zutils.getGroundAt(coords, include_water, include_objects)
@@ -250,6 +250,9 @@ function zutils.AwaitEntityFromNetId(netID)
     if not netID then return false, "netID was nil" end
     if type(netID) ~= "number" then return false, "netID was not a number:"..(netID or "nil") end
     local timeout = 0
+    if zutils.context == "client" then
+        if not NetworkDoesNetworkIdExist(netID) then return end
+    end
     local entity = NetworkGetEntityFromNetworkId(netID)
     while not entity or entity <= 0 do
         entity = NetworkGetEntityFromNetworkId(netID)

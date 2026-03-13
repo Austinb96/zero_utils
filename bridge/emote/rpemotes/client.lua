@@ -1,11 +1,20 @@
-local emote = {}
+local emotes = {}
 
-function emote.start(name, texture_variation)
-    exports["rpemotes"]:EmoteCommandStart(name, texture_variation or 0)
+function emotes.play(emote, variation)
+    printdb(true, "playing '%s' '%s'",emote, variation)
+    exports.rpemotes:EmoteCommandStart(emote)
 end
 
-function emote.cancel()
-    exports["rpemotes"]:EmoteCancel()
+function emotes.stop(now)
+    print("cancel")
+    exports.rpemotes:EmoteCancel(now)
 end
 
-return emote
+function emotes.isPlaying(emote)
+    local current_emote = exports.rpemotes:getCurrentEmote()
+    printtable("currnt_emote", current_emote)
+    if not current_emote then return false end
+    return current_emote.command == emote
+end
+
+return emotes

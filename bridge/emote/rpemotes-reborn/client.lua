@@ -1,11 +1,11 @@
-local emote = {}
+local emotes = {}
 
-function emote.start(name, texture_variation)
+function emotes.play(name, texture_variation)
     exports["rpemotes-reborn"]:EmoteCommandStart(name, texture_variation or 0)
 end
 
-function emote.cancel()
+function emotes.stop()
     exports["rpemotes-reborn"]:EmoteCancel()
 end
 
-return emote
+return emotes

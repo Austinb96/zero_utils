@@ -1,8 +1,12 @@
-function zutils.loadModel(model)
+function zutils.loadModel(model, return_err)
     local hash = zutils.joaat(model)
 
     if not IsModelInCdimage(hash) then
-        printerr("Model %s not found in cdimage", model)
+        if return_err then 
+            return false, ("Model %s notfound in cdimage"):format(model)
+        else
+            printerr("Model %s not found in cdimage", model)
+        end
     end
 
     if HasModelLoaded(hash) then

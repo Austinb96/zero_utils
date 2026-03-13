@@ -73,40 +73,37 @@ end
 target.addGlobalPed = function(name, options)
     local formatted = formatOptions(options)
     exports['qb-target']:AddGlobalPed({ options = formatted, distance = options.distance or 2.5 })
-    return {
-        remove = function()
-            target.removeGlobalPed(name)
-        end
-    }
 end
 
 target.addModelTarget = function(model, options)
     qb_target:AddTargetModel(model, formatOptions(options))
-    return {
-        remove = function()
-            target.RemoveTargetModel(model, options)
-        end
-    }
 end
 
 target.addGlobalObject = function(name, options)
     local formatted = formatOptions(options)
     exports['qb-target']:AddGlobalObject({ options = formatted, distance = options.distance or 2.5 })
-    return {
-        remove = function()
-            target.RemoveGlobalObject(name)
-        end
-    }
 end
 
 target.addGlobalVehicle = function(name, options)
     local formatted = formatOptions(options)
     exports['qb-target']:AddGlobalVehicle({ options = formatted, distance = options.distance or 2.5 })
-    return {
-        remove = function()
-            target.RemoveGlobalVehicle(name)
-        end
-    }
+end
+
+target.removeNetIDTarget = function(netId, options)
+    qb_target:RemoveTargetEntity(netId, options)
+end
+
+target.removeEntityTarget = function(entities, options)
+    qb_target:RemoveTargetEntity(entities, options)
+end
+
+
+target.removeModelTarget = function(model, options)
+    qb_target:RemoveTargetModel(model, options)
+end
+
+target.removeZoneTarget = function(id)
+    qb_target:RemoveZone(id)
 end
 
 return target

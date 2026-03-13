@@ -19,4 +19,18 @@ function zutils.banking.withdrawSociety(job, amount, reason, src)
     return banking.withdrawSociety(job, amount, reason, src)
 end
 
+function zutils.banking.transfer(source, payment_method, target_account, amount, reason)
+    local result, err = zutils.player.removeMoney(source, amount, payment_method, reason)
+    if not result then
+        return false, err
+    end
+    local society = type(target_account) == "string"
+    if society then
+        result, err = zutils.banking.depositSociety(target_account, amount, reason)
+        if not result then return false, err end
+    end
+
+    return true
+end
+
 return zutils.banking

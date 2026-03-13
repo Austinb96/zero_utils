@@ -48,8 +48,13 @@ RegisterNetEvent('zero_utils:server:qb-inventory:OpenInventory'..zutils.name, fu
             stash.groups = { stash.groups }
         end
 
-        if not (table.contains(stash.groups, player_job) or table.contains(stash.groups, player_gang)) then
-            return
+        if stash.groups then
+            if not (
+                table.contains(stash.groups, player_job) or
+                table.contains(stash.groups, player_gang)
+            ) then
+                return
+            end
         end
 
         if stash.coords then
