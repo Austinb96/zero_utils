@@ -1,6 +1,6 @@
 local bossmenu = {}
 
-function bossmenu.open(groupType, group)
+function bossmenu.open()
     ExecuteCommand('openbossmenu')
 end
 

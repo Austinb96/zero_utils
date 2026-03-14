@@ -1,4 +1,4 @@
-local fuel = zutils.bridge_loader("fuel", "client")
+local fuel = zutils.bridge_loader("fuel")
 if not fuel then printerr("Failed to load fuel bridge") return end
 
 local MISMATCHED_VEHICLE_TYPES = {

@@ -11,11 +11,15 @@ function zutils.kvp.get(key, resource)
         return nil, "Key does not exist"
     end
     local success, result = pcall(json.decode, value)
-    return success and result or value
+    if success then return result or value else return value end
 end
 
 function zutils.kvp.set(key, value)
-    if type(value) == "table" then
+    if value == nil then
+        zutils.kvp.remove(key)
+        return
+    end
+    if type(value) == "table" or type(value) == "boolean" then
         value = json.encode(value)
     end
 

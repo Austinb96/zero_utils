@@ -4,10 +4,9 @@
 
     let {
         activeTab = $bindable(Tabs.HOME),
+        tabs = $bindable(Object.values(Tabs)),
         isSticky = true,
     } = $props();
-    
-    let tabs = Object.values(Tabs);
 </script>
 
 <nav style={isSticky ? "position: sticky; top: 0; z-index: 1000;" : ""}>

@@ -1,4 +1,3 @@
-local emote = {}
+local emotes = {}
 
-
-return emote
+return emotes

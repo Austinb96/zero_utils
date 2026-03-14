@@ -26,7 +26,7 @@ function zutils.getClosestPlayers(src, max_distance)
             end
         end
     end
-
+    
     table.sort(close_players, function(a, b)
         return a.distance < b.distance
     end)

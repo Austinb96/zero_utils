@@ -24,7 +24,8 @@ function WebhookBuilder:new()
             url = nil
         },
         username = "FreestyleRP",
-        avatar_url = ""
+        avatar_url = "",
+        allowed_mentions = { parse = {} }
     }
     setmetatable(builder, WebhookBuilder)
     return builder
@@ -47,6 +48,11 @@ end
 
 function WebhookBuilder:setUrl(url)
     self.embed.url = url
+    return self
+end
+
+function WebhookBuilder:setAllowedMentions(mentions)
+    self.allowed_mentions = mentions
     return self
 end
 

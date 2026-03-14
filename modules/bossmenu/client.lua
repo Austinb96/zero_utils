@@ -3,8 +3,8 @@ if not bossmenu then return end
 
 zutils.bossmenu = {}
 
-function zutils.bossmenu.open(type)
-    bossmenu.open(type)
+function zutils.bossmenu.open(group_type, group)
+    bossmenu.open(group_type, group)
 end
 
 return zutils.bossmenu

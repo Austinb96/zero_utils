@@ -1,5 +1,6 @@
 local progressBar = function(name, label, duration, options)
     local promise = promise:new()
+    options = options or {}
     options.animation = options.animation or {}
     exports['progressbar']:Progress({
         name = name:lower(),
@@ -7,7 +8,12 @@ local progressBar = function(name, label, duration, options)
         label = label,
         useWhileDead = options.useWhileDead,
         canCancel = options.canCancel,
-        controlDisables = options.controlDisables,
+        controlDisables = options.controlDisables or {
+            disableMovement = true,
+            disableCarMovement = true,
+            disableMouse = false,
+            disableCombat = true,
+        },
         animation = {
             animDict = options.animation.dict or options.animation.animDict,
             anim = options.animation.anim,
@@ -33,6 +39,7 @@ local progressBar = function(name, label, duration, options)
     if options.onEnd then
         options.onEnd()
     end
+    ClearPedTasks(zutils.cache.ped)
     return promise.value
 end
 

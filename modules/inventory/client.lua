@@ -28,6 +28,10 @@ function zutils.inventory.findItem(item, metadata)
     return inventory.findItem(item, metadata)
 end
 
+function zutils.inventory.count(item, metadata)
+    return inventory.count(item, metadata)
+end
+
 function zutils.inventory.getItemInfo(item)
     return inventory.getItemInfo(item)
 end

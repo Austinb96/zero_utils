@@ -1,33 +1,72 @@
 local core = {}
 
-function core.getPlayer(src)
-    local player = QBCore.Functions.GetPlayer(tonumber(src))
+function core.getOfflinePlayer(cid)
+    local player = QBCore.Player.GetOfflinePlayer(cid)
+    if not player then return false, "player does not exist" end
+    
+    return player
+end
+
+function core.getPlayer(src_or_cid)
+    local player = QBCore.Functions.GetPlayer(tonumber(src_or_cid) or src_or_cid)
+    if not player then
+        player = QBCore.Functions.GetPlayerByCitizenId(src_or_cid)
+        
+        if not player then player = core.getOfflinePlayer(src_or_cid) end
+    end
+    
     if not player then return false, "Player not found" end
     return player
 end
 
-function core.getPlayerData(src)
-    local player, err = QBCore.Functions.GetPlayer(tonumber(src))
+function core.getPlayerData(src_or_cid)
+    local player, err = QBCore.Functions.GetPlayer(tonumber(src_or_cid))
     if not player then return false, err end
     local player_data = player.PlayerData
     if not player_data then return false, "Player Data not found" end
     return player_data
 end
 
-function core.getGang(src)
-    local player_data, err = core.getPlayerData(src)
+function core.getJob(src_or_cid)
+    local player_data, err = core.getPlayerData(src_or_cid)
+    if not player_data then return false, err end
+    local job = player_data.job
+    if not job then return false, "Job not found" end
+    return job
+end
+
+function core.setJob(src_or_cid, job, rank, on_duty)
+    local player, err = core.getPlayer(src_or_cid)
+    if not player then return false, err end
+
+    local result = player.Functions.SetJob(job, rank)
+    if not result then return false, "failed to give job" end
+
+    if type(on_duty) == "boolean" then
+        player.Functions.SetJobDuty(on_duty)
+    end
+
+    player.Functions.Save()
+    return true
+end
+
+function core.getGang(src_or_cid)
+    local player_data, err = core.getPlayerData(src_or_cid)
     if not player_data then return false, err end
     local gang = player_data.gang
     if not gang then return false, "Gang not found" end
     return gang
 end
 
-function core.getJob(src)
-    local player_data, err = core.getPlayerData(src)
-    if not player_data then return false, err end
-    local job = player_data.job
-    if not job then return false, "Job not found" end
-    return job
+function core.setGang(src_or_cid, gang, rank)
+    local player, err = core.getPlayer(src_or_cid)
+    if not player then return false, err end
+
+    local result = player.Functions.SetGang(gang, rank)
+    if not result then return false, "failed to give gang" end
+
+    player.Functions.Save()
+    return true
 end
 
 function core.getJobData(jobName)
@@ -35,7 +74,6 @@ function core.getJobData(jobName)
     if not job_data then return false, "Job not found" end
     return job_data
 end
-
 
 function core.addThirst(src, thirst)
     local player, err = core.getPlayer(src)
@@ -121,14 +159,14 @@ function core.setArmour(src, armour)
     SetPedArmour(src, armour)
 end
 
-function core.removeMoney(src, amount, method, reason)
-    local player, err = core.getPlayer(src)
+function core.removeMoney(src_or_cid, amount, method, reason)
+    local player, err = core.getPlayer(src_or_cid)
     if not player then return false, err end
     return player.Functions.RemoveMoney(method, amount, reason)
 end
 
-function core.addMoney(src, amount, method, reason)
-    local player, err = core.getPlayer(src)
+function core.addMoney(src_or_cid, amount, method, reason)
+    local player, err = core.getPlayer(src_or_cid)
     if not player then return false, err end
     return player.Functions.AddMoney(method, amount, reason)
 end

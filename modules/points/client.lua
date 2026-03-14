@@ -21,6 +21,13 @@ zutils.points = {
             points[id].onRemove()
         end
         points[id] = nil
+    end,
+    updateCoords = function(id, new_coords)
+        if not points[id] then
+            return
+        end
+        
+        points[id].coords = new_coords
     end
 }
 

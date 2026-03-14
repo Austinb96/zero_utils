@@ -10,9 +10,9 @@
 
     const { children }: Props = $props();
 
-    ReceiveNUI<boolean>("enableUI", (visible) => {
-        console.log("enableUI", visible);
-        providers.isVisible = visible || !providers.isVisible;
+    ReceiveNUI<string>("enableUI", (tab) => {
+        providers.isVisible = true;
+        providers.tab = tab
     });
 
     onMount(() => {

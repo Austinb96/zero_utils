@@ -1,13 +1,13 @@
-local function open_ui()
+local function open_ui(tab)
     SetNuiFocus(true, true)
     SendNUIMessage({ 
         action = "enableUI",
-        data = true,
+        data = tab or "all",
     })
 end
 
-RegisterCommand("ztool", function()
-    open_ui()
+RegisterCommand("ztool", function(src, args)
+    open_ui(args[1])
 end, false)
 
 RegisterNUICallback("closeUI", function(_, cb)

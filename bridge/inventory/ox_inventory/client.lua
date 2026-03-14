@@ -39,6 +39,10 @@ function inventory.findItem(item, metadata)
     return ox_inventory:Search('slots', item, metadata)
 end
 
+function inventory.count(item, metadata)
+    return ox_inventory:Search('count', item, metadata)
+end
+
 function inventory.openInventory(inv_type, id)
     ox_inventory:openInventory(inv_type, id)
 end

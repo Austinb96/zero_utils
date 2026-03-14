@@ -49,7 +49,7 @@ local VEHICLE_TYPES = {
 
 zutils.vehicles = {}
 
-function zutils.vehicles.getVehiclesByPlate(plate)
+function zutils.vehicles.getVehicleByPlate(plate)
     local vehicles = GetGamePool('CVehicle')
     for i = 1, #vehicles do
         local veh = vehicles[i]
@@ -58,7 +58,7 @@ function zutils.vehicles.getVehiclesByPlate(plate)
             return veh
         end
     end
-    return nil, 'Vehicle not found'
+    return nil, ('Vehicle(%s) not found'):format(plate)
 end
 
 function zutils.vehicles.getVehicleTypeByModel(model)

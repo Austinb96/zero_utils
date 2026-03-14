@@ -3,6 +3,21 @@ RegisterCommand("gethash", function(_, args)
     print(("%s = %s"):format(model, GetHashKey(model)))
 end, false)
 
+RegisterCommand("findhash", function(_, args)
+    local hash = tonumber(args[1])
+    if not hash then return print("usage: /findhash <decimal>") end
+
+    for name in pairs(exports.ox_inventory:Items()) do
+        if zutils.joaat(name) == hash then
+            return print(("foundItem: %s(%s)"):format(name, hash))
+        end
+    end
+
+    print("none found")
+end, false)
+
+
+
 RegisterCommand("carmax", function(source, args)
     local model = args[1]
     local coords = GetEntityCoords(GetPlayerPed(source))
