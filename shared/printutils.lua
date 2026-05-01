@@ -64,30 +64,44 @@ Color = {
 }
 
 local function getFormattedText(text, args, textColor)
-    if not args then return textColor .. text end
     text = tostring(text)
-    local expectedArgs = select(2, text:gsub("%%s", ""))
-    if #args < expectedArgs then
-        while #args < expectedArgs do
-            table.insert(args, "nil")
-        end
-    elseif #args > expectedArgs then
-        local trace = debug.traceback()
-        printwarn("Too many arguments for %s, expected %s got %s", text, expectedArgs, #args)
-        printwarn(trace)
+
+    if not args or #args == 0 then
+        return textColor .. text .. Color.White
     end
-    local formattedArgs = { Color.LightBlue .. "nil" .. textColor }
-    local arg
-    for i = 1, #args do
-        arg = args[i]
+    
+    for i, arg in pairs(args) do
         if type(arg) == "table" then
-            arg = Color.LightBlue .. table.concat(arg, ",") .. textColor
-        else
-            arg = tostring(arg)
+            arg = json.encode(arg)
         end
-        formattedArgs[i] = Color.LightBlue .. arg .. textColor
+        args[i] = Color.LightBlue .. arg .. textColor
     end
-    return string.format(textColor .. text .. Color.White, table.unpack(formattedArgs))
+
+    local ok, formatted = pcall(
+        string.format,
+        textColor .. text .. Color.White,
+        table.unpack(args)
+    )
+
+    if ok then
+        return formatted
+    end
+
+    print(Color.Red .. "[Error] Format failed" .. Color.White, text, formatted)
+    local trace = debug.traceback()
+    print(Color.Red .. trace .. Color.White)
+
+    local fallbackArgs = {}
+    for i = 1, #args do
+        local arg = args[i]
+        if type(arg) == "table" then
+            fallbackArgs[i] = table.concat(arg, ",")
+        else
+            fallbackArgs[i] = tostring(arg)
+        end
+    end
+
+    return textColor .. text .. " [" .. table.concat(fallbackArgs, ", ") .. "]" .. Color.White
 end
 
 function printfmt(text, ...)
