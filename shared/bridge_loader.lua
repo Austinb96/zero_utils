@@ -1,4 +1,12 @@
-if not Config.Bridge then Config.Bridge = {} end
+local config_ = Config or config or cfg
+if config_ and not config_.Bridge then config_.Bridge = {} end
+CreateThread(function()
+    while config_ == nil do
+        config_ = Config or config or cfg
+        if not config_ and GetResourceState(zutils.name) == "started" then config_ = { Bridge = {} } end
+        Wait(0)
+    end
+end)
 local loaded          = {}
 
 local default_bridges = {
@@ -10,6 +18,12 @@ local default_bridges = {
     },
     banking = {
         "fd_banking",
+    },
+    billing = {
+        "okokBilling",
+        "codem-billing",
+        "jim-payments",
+        "tgg-billing"
     },
     inventory = {
         "ox_inventory",
@@ -60,6 +74,7 @@ local default_bridges = {
     bossmenu = {
         "qb_management",
         "qbx_management",
+        "zero_groupmenu"
     },
     keys = {
         "dusa_vehiclekeys"
@@ -70,6 +85,10 @@ local default_bridges = {
         "dpemotes",
         "emotes"
     },
+    fuel = {
+        "cc-fuel",
+        "ox_fuel"
+    }
 }
 
 local bridge_aliases  = {
@@ -86,6 +105,12 @@ local bridge_aliases  = {
     },
     banking = {
         fd = "fd_banking",
+    },
+    billing = {
+        okok = "okokBilling",
+        codem = "codem-billing",
+        jim = "jim-payments",
+        tgg = "tgg-billing"
     },
     notify = {
         ox = "ox_lib",
@@ -132,6 +157,7 @@ local bridge_aliases  = {
     bossmenu = {
         qb = "qb-management",
         qbx = "qbx_management",
+        zero = "zero_groupmenu"
     }
 }
 
@@ -161,7 +187,8 @@ local function is_bridge_started(bridge_key)
 end
 
 local function find_active_bridge(module_name, context)
-    if Config.Bridge[module_name] then return resolve_bridge_alias(module_name, Config.Bridge[module_name]) end
+    while not config_ do Wait(0) end
+    if config_.Bridge[module_name] then return resolve_bridge_alias(module_name, Config.Bridge[module_name]) end
     local bridges = default_bridges[module_name]
     if not bridges then
         printerr("No default bridges found for module: %s", module_name)
@@ -221,17 +248,31 @@ local function bridge_loader(module_name)
         return zutils.require(context_path)
     end)()
 
-    shared_bridge = table.combine(shared_bridge or {}, context_bridge or {})
+    local context_type = type(context_bridge)
+    local shared_type = type(shared_bridge)
+    if context_type == "table" and shared_type == "table" then
+        final_bridge = table.combine(shared_bridge or {}, context_bridge or {})
+    elseif shared_type == "function" and context_type == "function" then
+        final_bridge = context_bridge
+    elseif shared_type == "table" and context_type == "function" then
+        printwarn("mixed bridge types shared:%s, context:%s", shared_type, context_type)
+        final_bridge = shared_bridge
+    elseif shared_type == "function" and context_type == "table" then
+        printwarn("mixed bridge types shared:%s, context:%s", shared_type, context_type)
+        final_bridge = context_bridge
+    else
+        final_bridge = context_bridge or shared_bridge
+    end
 
-    if not shared_bridge then
+    if not final_bridge then
         printerr("No bridge files found for module: %s, resource: %s", module_name, bridge_resource)
         return nil
     end
 
     printdb("Successfully loaded bridge: %s (%s)", module_name, context)
 
-    loaded[module_name .. context] = shared_bridge
-    return shared_bridge
+    loaded[module_name .. context] = final_bridge
+    return final_bridge
 end
 
 zutils.bridge_loader = bridge_loader

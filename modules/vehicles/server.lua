@@ -166,19 +166,22 @@ zutils.vehicles.generatePlate = function(pattern)
     end
 end
 
-function zutils.vehicles.isPlateOwned(plate)
-    local result = MySQL.Sync.fetchAll("SELECT id FROM player_vehicles WHERE plate = ?", { plate })
+function zutils.vehicles.isPlateOwned(plate, check_fake_plate)
+    local query = "SELECT id FROM player_vehicles WHERE plate = ?"
+    if check_fake_plate then
+        query = query .. " OR fakeplate = ?"
+    end
+    local result = MySQL.Sync.fetchAll(query, { plate, (check_fake_plate and plate or nil) })
     return result[1] ~= nil
 end
 
-function zutils.vehicles.isOwned(veh)
+function zutils.vehicles.isOwned(veh, check_fake_plate)
     local plate = zutils.GetPlate(veh)
     if not plate or plate == "" then
         printerr("Vehicle does not have a valid plate.")
         return false
     end
-    local result = MySQL.Sync.fetchAll("SELECT id FROM player_vehicles WHERE plate = ?", { plate })
-    return result[1] ~= nil
+    return zutils.vehicles.isPlateOwned(plate, check_fake_plate)
 end
 
 function zutils.vehicles.getVehicleTypeByModel(src, model)
@@ -194,6 +197,33 @@ function zutils.vehicles.isOut(plate)
         end
     end
     return false
+end
+
+function zutils.vehicles.getVehicleByPlate(plate)
+    local vehicles = GetGamePool('CVehicle')
+    for i = 1, #vehicles do
+        local veh = vehicles[i]
+        local vehPlate = zutils.GetPlate(veh)
+        if vehPlate == plate then
+            return veh, nil
+        end
+    end
+    return nil, ('Vehicle(%s) not found'):format(plate)
+end
+
+function zutils.vehicles.setFuel(veh, amount)
+    if not DoesEntityExist(veh) then
+        return false, "Vehicle does not exist"
+    end
+    if amount < 0 then
+        return false, "Invalid fuel amount"
+    end
+    
+    amount = math.floor(amount)
+
+    fuel.setFuel(veh, amount)
+
+    return true
 end
 
 return zutils.vehicles

@@ -1,4 +1,3 @@
--- bridge/callback/es_extended/server.lua
 local ESX = zutils.core_loader('ESX')
 
 local callback = {}

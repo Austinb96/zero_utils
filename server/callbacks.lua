@@ -16,3 +16,5 @@ zutils.callback.register('zero_utils:server:getFormatedPlayerSelection', functio
     end
     return result
 end)
+
+zutils.callback.register("zero_utils:server:getPlayerBucket", zutils.bucket.getPlayer)

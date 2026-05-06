@@ -26,12 +26,6 @@ zutils.events.onPlayerUnload = function(cb)
 end
 
 function zutils.events.onVehicleEntered(cb)
-    if zutils.cache.vehicle and zutils.cache.vehicle ~= 0 then
-        local model = GetEntityModel(zutils.cache.vehicle)
-        local vehicle_name = GetDisplayNameFromVehicleModel(model)
-        local vehicle_type = zutils.vehicles.getVehicleTypeByModel(model)
-        cb(zutils.cache.vehicle, zutils.cache.seat, model, vehicle_name, vehicle_type)
-    end
     zutils.cache.onSet('vehicle', function(vehicle)
         if not vehicle or vehicle == 0 then
             return

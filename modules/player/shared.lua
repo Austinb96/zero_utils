@@ -23,16 +23,16 @@ function zutils.player.getJob(src)
     return player.getJob(src)
 end
 
+function zutils.player.setJob(src, job, rank, on_duty)
+    return player.setJob(src, job, rank, on_duty)
+end
+
 function zutils.player.getGang(src)
     return player.getGang(src)
 end
 
-function zutils.player.getJobData(src, jobName)
-    return player.getJobData(src, jobName)
-end
-
-function zutils.player.getGroupInfo(src, isJob)
-    return player.getPlayerData(src)
+function zutils.player.setGang(src, gang, rank)
+    return player.setGang(src, gang, rank)
 end
 
 function zutils.player.getGender(src)

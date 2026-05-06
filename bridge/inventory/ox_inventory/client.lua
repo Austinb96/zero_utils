@@ -27,12 +27,20 @@ end
 
 function inventory.hasItem(item, count, metadata)
     local result = ox_inventory:Search("count", item, metadata)
-    local amount = count or 1
-    if result >= amount then
-        return true
+    if type(result) == "table" then
+        result = result[item] or result[string.upper(item)]
     end
+    if (result or 0) >= (count or 1) then return true end
 
     return false, "You do not have enough: " .. item
+end
+
+function inventory.findItem(item, metadata)
+    return ox_inventory:Search('slots', item, metadata)
+end
+
+function inventory.count(item, metadata)
+    return ox_inventory:Search('count', item, metadata)
 end
 
 function inventory.openInventory(inv_type, id)
@@ -41,6 +49,10 @@ end
 
 function inventory.Image(item)
     return 'https://cfx-nui-ox_inventory/web/images/'..item..'.png'
+end
+
+function inventory.setBusy(busy)
+    LocalPlayer.state.invBusy = busy
 end
 
 return inventory

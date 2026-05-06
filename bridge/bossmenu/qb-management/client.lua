@@ -1,7 +1,7 @@
 local bossmenu = {}
 
-function bossmenu.openMenu()
-    TriggerEvent("qb-management:client:openMenu")
+function bossmenu.open()
+    TriggerEvent("qb-bossmenu:client:OpenMenu")
 end
 
 return bossmenu

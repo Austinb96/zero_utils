@@ -4,7 +4,16 @@ if not core then return end
 zutils.core = {}
 
 function zutils.core.getJobData(jobName)
-    return core.getJobData(jobName)
+    local data = core.getJobData(jobName)
+    local max_rank = 0
+    for rank, _ in pairs(data.grades) do
+        rank = tonumber(rank)
+        if rank and  max_rank < rank then
+            max_rank = rank
+        end
+    end
+    data.maxRank = max_rank
+    return data
 end
 
 return zutils.core

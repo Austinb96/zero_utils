@@ -3,22 +3,59 @@
     import { Tabs } from "$types/enums";
     import Settings from "$components/Settings.svelte";
     import EntityChecker from "$components/EntityChecker.svelte";
+    import ItemsTab from "$components/ItemsTab.svelte";
+    import Furniture from "$components/tabs/furniture/Furniture.svelte";
+    import Vehicles from "$components/tabs/vehicles/Vehicles.svelte";
+    import { providers } from "$data/providers.svelte";
 
     let activeTab = $state(Tabs.HOME);
+    
+    $effect(() => {
+        if (allowedTabs.length > 0 && !allowedTabs.includes(activeTab)) {
+            activeTab = allowedTabs[0];
+        }
+    });
+    
+    const tabComponents: Record<Tabs, any> = {
+        [Tabs.HOME]: null,
+        [Tabs.ITEMS]: ItemsTab,
+        [Tabs.FURNITURE]: Furniture,
+        [Tabs.ENTITY]: EntityChecker,
+        [Tabs.SETTINGS]: Settings,
+        [Tabs.VEHICLES]: Vehicles,
+    };
+    
+    let allowedTabs = $derived.by(() => {
+        if (providers.tab === "all") {
+            return Object.values(Tabs);
+        }
+        
+        const matchingTab = Object.values(Tabs).find(
+            tab => tab.toLowerCase() === providers.tab.toLowerCase()
+        );
+        
+        
+        return matchingTab ? [matchingTab] : [];
+    });
+    
+    const isTabAllowed = $derived(
+        allowedTabs.includes(activeTab)
+    );
 </script>
 
 <div id="side-panel-container">
-    <Navigation bind:activeTab/>
+    <Navigation bind:activeTab bind:tabs={allowedTabs}/>
     <div id="display-content">
         <div class="content-wrapper">
-            {#if activeTab === Tabs.HOME}
-                <div>Home Content</div>
-            {/if}
-            {#if activeTab === Tabs.ENTITY}
-                <EntityChecker/>
-            {/if}
-            {#if activeTab === Tabs.SETTINGS}
-                <Settings/>
+            {#if isTabAllowed}
+                {#if activeTab === Tabs.HOME}
+                    <div>Home Content</div>
+                {:else}
+                    {@const Component = tabComponents[activeTab]}
+                    {#if Component}
+                        <Component />
+                    {/if}
+                {/if}
             {/if}
         </div>
     </div>

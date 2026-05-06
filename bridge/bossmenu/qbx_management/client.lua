@@ -1,7 +1,7 @@
 local bossmenu = {}
 
-function bossmenu.openMenu(groupType)
-    exports['qbx_management']:OpenBossMenu(groupType)
+function bossmenu.open(group_type)
+    exports.qbx_management:OpenBossMenu(group_type)
 end
 
 return bossmenu

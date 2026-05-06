@@ -10,11 +10,12 @@ function zutils.events.onPlayerLoaded(cb)
         end)
     end
     if not zutils.isResourceMissing("qb-core") then
-        AddEventHandler("QBCore:Server:PlayerLoaded", function(player)
-            local src = player and player.source or source
-            cb(tonumber(src))
+        RegisterNetEvent("QBCore:Server:OnPlayerLoaded", function()
+            local src = source
+            cb(src)
         end)
     end
 end
+
 
 return zutils.events

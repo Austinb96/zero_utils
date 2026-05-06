@@ -65,7 +65,7 @@ function zutils.core_loader(core_name)
 
     local core_def = core_definitions[core_name]
     if not core_def then
-        printdb(debug_print, "No core definition found for: %s", core_name)
+        printwarn("No core definition found for: %s", core_name)
         return nil
     end
     printdb(debug_print, "Loading core: %s %s", core_name, core_def.resource)
@@ -79,7 +79,6 @@ function zutils.core_loader(core_name)
     loading_cores[core_name] = true
     if core_def.ignore_source then
         if sources.source == core_def.ignore_source then
-            -- printdb(true, "Ignoring load request from %s", sources.source)
             loading_cores[core_name] = nil
             return nil
         end
@@ -99,7 +98,6 @@ function zutils.core_loader(core_name)
         return nil
     end
     loaded_cores[core_name] = core
-    printdb(debug_print, "[%s] Successfully loaded core", core_name)
     return core
 end
 

@@ -67,6 +67,7 @@ if isMainResource then
     end
 else
     function cache.set(key, value)
+        while not zutils.initialized do Wait(0) end
         if type(value) == 'function' then
             value = value()
         end
@@ -74,6 +75,8 @@ else
     end
 
     function cache.get(key)
+        while not zutils.initialized do Wait(0) end
+        if not key then printerr("key is nil") end 
         if localCache[key] ~= nil then
             return localCache[key]
         end
@@ -82,7 +85,7 @@ else
         if value ~= nil then
             localCache[key] = value
         end
-
+        
         if not events[key] then
             events[key] = {}
             events[key][1] = function (new, old)
@@ -99,18 +102,18 @@ else
     end
 
     function cache.getAll()
+        while not zutils.initialized do Wait(0) end
         return exports.zero_utils:getAllCache()
     end
 end
 
 function cache.onSet(key, callback)
+    while not zutils.initialized do Wait(0) end
     if type(callback) ~= 'function' then
         return printerr('Cache listener callback must be a function')
     end
 
-    if not events[key] then
-        cache.get(key)
-    end
+    callback(cache.get(key))
 
     events[key][#events[key]+1] = function (new, old)
         callback(new, old)

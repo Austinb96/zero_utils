@@ -48,7 +48,6 @@ local function send_discord_hook(src, msg, player_data)
             :addField("📍 Coordinates", coords, true)
             :addField("🏠 Server ID", tostring(src), true)
             :addField("⏰ Server Time", os.date("%Y-%m-%d %H:%M:%S"), true)
-            :setFooter("FreestyleRP Anti-Cheat", "https://i.imgur.com/3ZC8b2D.png")
             :setTimestamp()
             :send("exploit-alerts")
 end

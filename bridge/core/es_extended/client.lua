@@ -23,11 +23,11 @@ function core.setHunger(hunger)
     TriggerEvent('esx_status:add', 'hunger', hunger)
     return true
 end
-function core.toggleDuty(duty, src)
+function core.toggleDuty(duty)
     if not duty then
         TriggerServerEvent("zero_utils:server:esx_toggleDuty")
     else
-        local player = core.getPlayerData(src)
+        local player = core.getPlayerData()
         if not player then return false, "Player Data not found" end
         player.Functions.SetJobDuty(duty)
     end

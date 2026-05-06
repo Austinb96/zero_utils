@@ -11,12 +11,16 @@ function menu.openMenu(id)
     lib.showContext(id)
 end
 
+function menu.close(trigger_close)
+    lib.hideMenu(trigger_close)
+end
+
 function menu.inputDialog(header, inputs)
     return lib.inputDialog(header, inputs)
 end
 
-function menu.closeMenu()
-    lib.hideContext()
+function menu.closeInput(on_exit)
+    lib.hideContext(on_exit)
 end
 
 return menu

@@ -26,6 +26,10 @@ function zutils.inventory.getAvailableWeight(inv)
     return inventory.getAvailableWeight(inv)
 end
 
+function zutils.inventory.getItemCount(inv, item, metadata)
+    return inventory.getItemCount(inv, item, metadata)
+end
+
 function zutils.inventory.createUseableItem(itemName, cb)
     return inventory.createUseableItem(itemName, cb)
 end
@@ -114,112 +118,144 @@ function zutils.inventory.forceOpenInventory(source, inv, id)
     return inventory.forceOpenInventory(source, inv, id)
 end
 
+local function to_craft_table(t1)
+    if type(t1) == "table" then
+        if type(t1[1]) == "string" then
+            t1 = { t1 }
+        end
+        local temp = {}
+        for index, v in pairs(t1) do
+            local item = v.item or v[1]
+            local amount = v.amount or v.count or v[2] or 1
+            local metadata = v.metadata or v[3]
+            if item then
+                temp[#temp + 1] = {
+                    item,
+                    amount,
+                    metadata,
+                }
+            else
+                printwarn("craft failed to convert at index %s", index)
+                return false, ("craft failed to convert at index %s"):format(index)
+            end
+        end
+        t1 = temp
+    elseif type(t1) == "string" then
+        t1 = { { t1, 1 } }
+    end
+
+    return t1
+end
+
 function zutils.inventory.craftItem(src, items, ingredients, options)
-    options = options or {}
-    local amount = options.amount or 1
-    if type(items) == "string" then
-        items = { { items, 1 } }
-    elseif items[1] and type(items[1]) == "string" then
-        items = { items }
-    end
-    
-    if type(items) == "table" and not items[1] then
-        local temp = {}
-        for k, v in pairs(items) do
-            temp[#temp + 1] = { k, v }
-        end
-        items = temp
-    end
-    
-    if type(ingredients) == "string" then
-        ingredients = {{ingredients, 1}}
-    elseif ingredients[1] and type(ingredients[1] == "string") then
-        ingredients = { ingredients }
-    end
+    printdb("----------------------------------------------------------")
 
-    if type(ingredients) == "table" and not ingredients[1] then
-        local temp = {}
-        for k, v in pairs(ingredients) do
-            temp[#temp + 1] = { k, v }
-        end
-        ingredients = temp
-    end
+    options        = options or {}
+    local amount   = options.amount or 1
+    local duration = options.duration or 0
+    local label    = options.label or "Crafting..."
 
-    printdb( "CRAFTING: Received items table: %s", json.encode(items))
-    printdb( "CRAFTING: Received ingredients table: %s", json.encode(ingredients))
+    local err
+    items, err = to_craft_table(items)
+    if not items then return false, err end
+    ingredients, err = to_craft_table(ingredients)
+    if not ingredients then return false, err end
 
-    for _, item in ipairs(items) do
-        if not zutils.inventory.doesItemExist(item[1]) then
-            zutils.logger(src, "exploit", (" tried to craft with an item that does not exist: %s"):format(item))
-            printwarn(zutils.logger.getFormatedPlayer(src) .. " tried to craft with an item that does not exist: %s", item)
-            return false, "Item does not exist: " .. item[1]
-        end
-    end
-    for _, ingredient in ipairs(ingredients) do
-        if not zutils.inventory.doesItemExist(ingredient[1]) then
-            zutils.logger(src, "exploit", (" tried to craft with an item that does not exist: %s"):format(ingredient))
-            printwarn(zutils.logger.getFormatedPlayer(src) .. " tried to craft with an item that does not exist: %s", ingredient)
-            return false, "Ingredient does not exist: " .. ingredient[1]
+    for _, t in ipairs({items, ingredients}) do
+        for _, entry in ipairs(t) do
+            if not zutils.inventory.doesItemExist(entry[1]) then
+                zutils.logger(src, "exploit", (" tried to craft with an item that does not exist: %s"):format(entry[1]))
+                return false, "Item does not exist: " .. entry[1]
+            end
         end
     end
 
-    local total_weight_needed, total_slots_needed = 0, 0
-    for _, item in ipairs(items) do
-        local info = zutils.inventory.getItemInfo(item[1])
-        if not info then
-            printwarn("Item does not exist: %s", item[1])
-            return false, "Item does not exist: " .. item[1]
-        end
-        total_weight_needed += (info.weight * item[2]) * amount
-        total_slots_needed += 1 * amount
-    end
-    for _, ingredient in ipairs(ingredients) do
-        local info = zutils.inventory.getItemInfo(ingredient[1])
-        if not info then
-            printwarn("Ingredient does not exist: %s", ingredient[1])
-            return false, "Ingredient does not exist: " .. ingredient[1]
-        end
-        total_weight_needed -= (info.weight * ingredient[2]) * amount
-        total_slots_needed -= 1 * amount
-    end
+    local iterations     = duration == 0 and 1 or amount
+    local multiplier     = duration == 0 and amount or 1
 
-    local available_weight = inventory.getAvailableWeight(src)
-    local available_slots = inventory.getAvailableSlots(src)
+    for i = 1, iterations do
 
-    printdb( "CRAFTING: Available weight: %s / Required: %s", available_weight, total_weight_needed)
-    printdb( "CRAFTING: Available slots: %s / Required: %s", available_slots, total_slots_needed)
-
-    if available_weight < total_weight_needed then
-        return false, "Not enough weight capacity to craft items"
-    end
-    if available_slots < total_slots_needed then
-        return false, "Not enough slots to craft items"
-    end
-
-    
-    --TODO add options for animations and wait times between crafting items
-    for i = 1, amount do
         for _, ing in ipairs(ingredients) do
-            printdb( "CRAFTING: Removing ingredient %s x %s", ing[1], ing[2])
-            local success, err = zutils.inventory.removeItem(src, ing[1], ing[2])
-            print(success, err)
-            if not success then return false, err or "Failed to remove ingredients" end
+            local required = (ing[2] == -1 and 1 or ing[2]) * multiplier
+            if not zutils.inventory.hasItem(src, ing[1], required, ing[3]) then
+                return false, "Missing ingredient: " .. ing[1]
+            end
         end
-    
+
+        local available_weight = inventory.getAvailableWeight(src)
+        local available_slots  = inventory.getAvailableSlots(src)
+
+        local weightAfterRemoval = available_weight
+        local slotsAfterRemoval  = available_slots
+
+        for _, ing in ipairs(ingredients) do
+            if ing[2] ~= -1 then
+                local info = zutils.inventory.getItemInfo(ing[1])
+                weightAfterRemoval += info.weight * ing[2] * multiplier
+                slotsAfterRemoval  += multiplier
+            end
+        end
+
+        local weightNeeded = 0
+        local slotsNeeded  = 0
+
+        for _, item in ipairs(items) do
+            local info = zutils.inventory.getItemInfo(item[1])
+            weightNeeded += info.weight * item[2] * multiplier
+            slotsNeeded  += multiplier
+        end
+
+        if weightAfterRemoval < weightNeeded then
+            zutils.notify(src, "error", "Not enough weight capacity")
+            return false, "Not enough weight capacity"
+        end
+
+        if slotsAfterRemoval < slotsNeeded then
+            zutils.notify(src, "error", "Not enough slots")
+            return false, "Not enough slots"
+        end
+
+        if duration > 0 then
+            local ok = zutils.progressBar(
+                src,
+                "crafting_" .. i,
+                label .. " (" .. i .. "/" .. amount .. ")",
+                duration,
+                {
+                    canCancel = true,
+                    animation = options.animation or {
+                        dict = "mini@repair",
+                        anim = "fixing_a_ped",
+                        flags = 49
+                    },
+                    controlDisables = options.controlDisables
+                }
+            )
+            if not ok then
+                return false, "Cancelled"
+            end
+        end
+
+        for _, ing in ipairs(ingredients) do
+            if ing[2] ~= -1 then
+                local required = ing[2] * multiplier
+                local ok, err = zutils.inventory.removeItem(src, ing[1], required, ing[3])
+                if not ok then return false, err end
+            end
+        end
+
+        for _, item in ipairs(items) do
+            local give = item[2] * multiplier
+            local ok, err = zutils.inventory.addItem(src, item[1], give, item[3])
+            if not ok then return false, err end
+        end
     end
 
-    for i = 1, amount do
-        for _, it in ipairs(items) do
-            printdb( "CRAFTING: Adding item %s x %s", it[1], it[2])
-            local success, err = zutils.inventory.addItem(src, it[1], it[2])
-            if not success then return false, err or "Failed to add crafted item" end
-        end
-    end
-
+    printdb("----------------------------------------------------------")
     return true
 end
 
-zutils.callback.register("zutils:inventory:registerPersonalStash:"..zutils.name, function(source, id)
+zutils.callback.register("zutils:inventory:registerPersonalStash:" .. zutils.name, function(source, id)
     local allowed_stash = personal_stashes[id]
     if not allowed_stash then
         printwarn("(src:%s, name:%s) tried to register a personal stash that does not exist: %s", source, GetPlayerName(source), id)
@@ -244,5 +280,83 @@ zutils.callback.register("zutils:inventory:registerPersonalStash:"..zutils.name,
         personal_stashes[id].max_weight, playerId, personal_stashes[id].groups, personal_stashes[id].coords)
     return true
 end)
+
+function zutils.inventory.giveRandomItem(source, items, options)
+    assert(source, "source must be specified")
+    assert(type(items) == "table" and #items > 0, "items must be a non-empty table")
+
+    options           = options or {}
+    local repeats     = options.repeats or 0
+    local minCount    = options.amount or 1
+    local waitTime    = options.wait or 0
+    local force       = options.force or false
+    local maxAttempts = options.attempts or 10
+
+    local function get_amount(cfgAmount)
+        if type(cfgAmount) == "number" then
+            return cfgAmount
+        end
+        local min = (cfgAmount and cfgAmount[1]) or 1
+        local max = (cfgAmount and cfgAmount[2]) or min
+        if min > max then min, max = max, min end
+        return math.random(min, max)
+    end
+
+    local function roll_once()
+        local pool = {}
+        for _, cfg in ipairs(items) do
+            local name = cfg.item
+            if name and zutils.inventory.doesItemExist(name) then
+                local chance = tonumber(cfg.chance) or 1.0
+                if math.random() <= chance then
+                    pool[#pool + 1] = cfg
+                end
+            else
+                printwarn("Item does not exist in random roll: %s", tostring(name))
+            end
+        end
+
+        local results = {}
+        if #pool > 0 then
+            for i = 1, math.min(minCount, #pool) do
+                local choice = table.remove(pool, math.random(#pool))
+                local qty = get_amount(choice.amount)
+                local ok, err = options.debug or zutils.inventory.addItem(source, choice.item, qty, choice.metadata)
+                if ok then
+                    results[#results + 1] = { item = choice.item, amount = qty }
+                    printdb("Gave %s x%s to %s", choice.item, qty, source)
+                else
+                    return results, err
+                end
+            end
+        end
+
+        return results
+    end
+
+    local final = {}
+    local totalRolls = 1 + repeats
+    local attempts = 0
+
+    for roll = 1, totalRolls do
+        local rollResults, err = {}, nil
+
+        repeat
+            attempts = attempts + 1
+            rollResults, err = roll_once()
+            if err then return final, err end
+        until #rollResults > 0 or not force or attempts >= maxAttempts
+
+        for i = 1, #rollResults do
+            final[#final + 1] = rollResults[i]
+        end
+
+        if roll < totalRolls and waitTime > 0 then
+            Wait(waitTime)
+        end
+    end
+
+    return final
+end
 
 return zutils.inventory

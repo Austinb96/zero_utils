@@ -9,11 +9,11 @@ local progress = function(name, label, duration, options)
             useWhileDead = options.useWhileDead,
             canCancel = options.canCancel,
             disable = {
-                move = (options.controlDisables.move and options.controlDisables.move) or false,
-                combat = (options.controlDisables.combat and options.controlDisables.combat) or false,
-                car = (options.controlDisables.car and options.controlDisables.car) or false,
-                mouse = (options.controlDisables.mouse and options.controlDisables.mouse) or false,
-                sprint = (options.controlDisables.sprint and options.controlDisables.sprint) or false,
+                move = (options.controlDisables and options.controlDisables.move) or false,
+                combat = (options.controlDisables and options.controlDisables.combat) or false,
+                car = (options.controlDisables and options.controlDisables.car) or false,
+                mouse = (options.controlDisables and options.controlDisables.mouse) or false,
+                sprint = (options.controlDisables and options.controlDisables.sprint) or false,
             },
         }
 
