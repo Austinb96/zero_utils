@@ -52,7 +52,7 @@ function zutils.player.setThirst(src, thirst)
 end
 
 function zutils.player.addThirst(src, thirst)
-    return player.setThirst(src, thirst)
+    return player.addThirst(src, thirst)
 end
 
 function zutils.player.setHunger(src, hunger)
@@ -60,7 +60,7 @@ function zutils.player.setHunger(src, hunger)
 end
 
 function zutils.player.addHunger(src, hunger)
-    return player.setHunger(src, hunger)
+    return player.addHunger(src, hunger)
 end
 
 function zutils.player.setHealth(src, health)
