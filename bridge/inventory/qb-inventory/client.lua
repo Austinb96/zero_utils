@@ -20,6 +20,7 @@ end
 function inventory.getItemImage(item)
     return 'https://cfx-nui-qb-inventory/html/images/'..item..'.png'
 end
+
 function inventory.getPlayerInventory()
     local PlayerInv = QBCore.Functions.GetPlayerData().items
     if not PlayerInv then

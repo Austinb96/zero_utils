@@ -35,6 +35,10 @@ function inventory.hasItem(item, count, metadata)
     return false, "You do not have enough: " .. item
 end
 
+function inventory.getItemImage(item)
+    return 'https://cfx-nui-ox_inventory/web/images/'..item..'.png'
+end
+
 function inventory.findItem(item, metadata)
     return ox_inventory:Search('slots', item, metadata)
 end
