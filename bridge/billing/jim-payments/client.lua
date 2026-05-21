@@ -5,7 +5,7 @@ function billing.open(data)
         job = data.job,
         gang = data.gang,
         coords = data.coords.xyz,
-        img = "<center><p><img src="..data.img.." width=100px></p>"
+        img = data.img or "",
     })
 end
 
