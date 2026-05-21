@@ -17,6 +17,15 @@ function inventory.getItemInfo(item)
     }
 end
 
+function inventory.getItemImage(item)
+    local _item, err = inventory.getItemInfo(item)
+    if not _item then
+        return false, err
+    end
+    
+    return _item.image
+end
+
 function inventory.getPlayerInventory()
     local PlayerInv = ox_inventory:GetPlayerItems()
     if not PlayerInv then
@@ -45,10 +54,6 @@ end
 
 function inventory.openInventory(inv_type, id)
     ox_inventory:openInventory(inv_type, id)
-end
-
-function inventory.Image(item)
-    return 'https://cfx-nui-ox_inventory/web/images/'..item..'.png'
 end
 
 function inventory.setBusy(busy)

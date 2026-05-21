@@ -1,4 +1,4 @@
-local inventory = zutils.bridge_loader("inventory", "client")
+local inventory = zutils.bridge_loader("inventory")
 if not inventory then return end
 
 zutils.inventory = {}
@@ -34,6 +34,10 @@ end
 
 function zutils.inventory.getItemInfo(item)
     return inventory.getItemInfo(item)
+end
+
+function zutils.inventory.getItemImage(item)
+    return inventory.getItemImage(item)
 end
 
 function zutils.inventory.setBusy(busy)
