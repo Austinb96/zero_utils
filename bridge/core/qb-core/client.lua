@@ -53,7 +53,9 @@ function core.getGroupInfo(isJob)
 end
 
 function core.getJobData(jobName)
-    local job_data = QBCore.Shared.Jobs[jobName]
+    local jobs = QBCore.Shared.Jobs
+    if not jobName then return jobs end
+    local job_data = jobs[jobName]
     if not job_data then return false, "Job not found" end
     return job_data
 end

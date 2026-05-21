@@ -31,8 +31,10 @@ function core.getJob(src)
 end
 
 function core.getJobData(jobName)
-    local Jobs = exports.qbx_core:GetJobs()
-    local job_data = Jobs[jobName]
+    local jobs = exports.qbx_core:GetJobs()
+    if not jobName then return jobs end
+    
+    local job_data = jobs[jobName]
     if not job_data then return false, "Job not found" end
     return job_data
 end
@@ -102,12 +104,14 @@ function core.addHealth(src, health)
 end
 
 function core.setHealth(src, health)
+    print("set health", src, health)
     if not src then return end
     local player, err = core.getPlayer(src)
     if not player then return false, err end
     local entity = GetPlayerPed(src)
     local max_health = GetEntityMaxHealth(entity)
     local new_health = math.clamp(100, health, max_health)
+    print("setting health", new_health)
     Entity(entity).state:set('sv_health', new_health, true)
 end
 
