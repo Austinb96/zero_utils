@@ -71,7 +71,8 @@ local function getFormattedText(text, args, textColor)
     end
     
     for i, arg in pairs(args) do
-        if type(arg) == "table" then
+        local _type = type(arg)
+        if _type == "table" or _type == "boolean" then
             arg = json.encode(arg)
         end
         args[i] = Color.LightBlue .. arg .. textColor
