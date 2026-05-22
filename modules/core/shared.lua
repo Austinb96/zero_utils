@@ -5,6 +5,7 @@ zutils.core = {}
 
 function zutils.core.getJobData(jobName)
     local data = core.getJobData(jobName)
+    if not jobName then return data end
     local max_rank = 0
     for rank, _ in pairs(data.grades) do
         rank = tonumber(rank)
