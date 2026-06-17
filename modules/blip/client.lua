@@ -134,6 +134,10 @@ function zutils.blip.createBlip(name, coords, options)
     BeginTextCommandSetBlipName('STRING')
     AddTextComponentString(tostring(name))
     EndTextCommandSetBlipName(blip)
+    
+    if options.navigate then
+        SetBlipRoute(blip, true)
+    end
 
     local blipObject = BlipObject:new(blip, name)
     blipObject.id = options.id or tostring(blipObject)
