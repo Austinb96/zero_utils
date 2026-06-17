@@ -5,6 +5,7 @@ zutils.vehicles = {}
 
 function zutils.vehicles.createVehicle(model, coords, props, options)
     model = zutils.joaat(model)
+    props = props or {}
     options = options or {}
     options.type = options.type or "automobile"
     local vehicle = CreateVehicleServerSetter(model, options.type, coords.x, coords.y, coords.z,
@@ -59,7 +60,12 @@ function zutils.vehicles.createVehicle(model, coords, props, options)
     end
     if options.giveKeys then
         Wait(200)
-        zutils.keys.giveKeys(props.plate, options.giveKeys)
+        if type(options.giveKeys) ~= "table" then
+            options.giveKeys = {options.giveKeys}
+        end
+        for _, src in pairs(options.giveKeys) do
+            zutils.keys.giveKeys(props.plate, src)
+        end
     end
     
     if options.freeze then
