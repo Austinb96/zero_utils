@@ -42,23 +42,25 @@ local function isTable(t1)
 end
 
 local function combine(t1, t2)
-    local combined = {}
-    if isArray(t1) and isArray(t2) then
-        for _, v in ipairs(t1) do
-            table.insert(combined, v)
-        end
-        for _, v in ipairs(t2) do
-            table.insert(combined, v)
-        end
-    else
-        for k, v in pairs(t1 or {}) do
-            combined[k] = v
-        end
-        for k, v in pairs(t2 or {}) do
-            combined[k] = v
+    t1 = t1 or {}
+
+    for k, v2 in pairs(t2 or {}) do
+        local v1 = t1[k]
+
+        if type(v1) == "table" and type(v2) == "table" then
+            if isArray(v1) and isArray(v2) then
+                for i = 1, #v2 do
+                    v1[#v1 + 1] = v2[i]
+                end
+            else
+                combine(v1, v2)
+            end
+        else
+            t1[k] = v2
         end
     end
-    return combined
+
+    return t1
 end
 
 local function isEmpty(t1)
