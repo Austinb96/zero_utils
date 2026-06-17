@@ -112,11 +112,23 @@ function BlipObject:exists()
 end
 
 function zutils.blip.createBlip(name, coords, options)
-    local blip = AddBlipForCoord(coords.x, coords.y, coords.z)
-    SetBlipSprite(blip, options.sprite or 106)
+    local blip
+    if options.radius then
+        blip = AddBlipForRadius(coords.x, coords.y, coords.z, options.radius * 1.0)
+        SetBlipColour(blip, 1)
+        options.alpha = options.alpha or 128
+    elseif options.area then
+        blip = AddBlipForArea(coords.x, coords.y, coords.z, options.area.width, options.area.height)
+        SetBlipRotation(blip, options.area.rotation)
+    else
+        blip = AddBlipForCoord(coords.x, coords.y, coords.z)
+        SetBlipSprite(blip, options.sprite or 106)
+        SetBlipScale(blip, options.scale or 0.7)
+        SetBlipDisplay(blip, (options.disp or 6))
+    end
+    
     SetBlipColour(blip, options.color or options.colour or 5)
-    SetBlipScale(blip, options.scale or 0.7)
-    SetBlipDisplay(blip, (options.disp or 6))
+    SetBlipAlpha(blip, options.alpha or 255)
     if options.shortRange then SetBlipAsShortRange(blip, true) end
     if options.category then SetBlipCategory(blip, options.category) end
     BeginTextCommandSetBlipName('STRING')
