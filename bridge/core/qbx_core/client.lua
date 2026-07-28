@@ -23,6 +23,15 @@ function core.getJobData(jobName)
     return job_data
 end
 
+function core.getGangData(gang_name)
+    local gangs = exports.qbx_core:GetGangs()
+    if not gang_name then return gangs end
+    
+    local gang_data = gangs[gang_name]
+    if not gang_data then return false, "Gang not found" end
+    return gang_data
+end
+
 function core.getGroupInfo(isJob)
     local data = exports.qbx_core:GetPlayerData()
     local group = isJob and data?.job or data?.gang
